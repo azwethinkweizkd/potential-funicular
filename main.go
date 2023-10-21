@@ -7,6 +7,8 @@ import (
     "database/sql"
     _ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
+	"github.com/gotailwindcss/tailwind/twembed"
+	"github.com/gotailwindcss/tailwind/twhandler"
 )
 
 func init() {
@@ -18,11 +20,12 @@ func init() {
 
 func main() {
 	fmt.Println("Mortgage Calulator")
-	dbPassword, exists := os.LookupEnv("DB_PASSWORD")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	mux := http.NewServeMux()
+	mux.Handle("/", http.FileServer(http.Dir("static")))
+	mux.Handle("/css/", twhandler.New(http.Dir("css"), "/css", twembed.New()))
 
-    if exists {
-		fmt.Println(dbPassword)
-    }
+	s := &http.Server{Addr: ":3001", Handler: mux}
 
 	h1 := func(w http.ResponseWriter, r *http.Request) {
 
@@ -46,7 +49,7 @@ func main() {
         panic(err.Error())
     }
     //defer insert.Close()
-
-	log.Fatal(http.ListenAndServe(":3000", nil))
+	fmt.Println("Now listening on: http://localhost:3001")
+	log.Fatal(s.ListenAndServe())
 }
 
