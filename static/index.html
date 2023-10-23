@@ -90,10 +90,13 @@
                 >
                 <input
                   hx-post="/postMonthlyPayment"
+                  hx-trigger="keyup changed delay:0.25s"
+                  hx-target="#monthlyPayment"
                   class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
                   name="purchasePrice"
                   id="purchasePrice"
                   type="number"
+                  value="0"
                   onkeypress="return /[0-9]/i.test(event.key)"
                 />
               </div>
@@ -104,6 +107,7 @@
               >
               <select
                 hx-post="/postMonthlyPayment"
+                hx-target="#monthlyPayment"
                 class="w-full block py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
                 name="mortgageTerm"
                 id="mortgageTerm"
@@ -125,12 +129,13 @@
               >
               <input
                 hx-post="/postMonthlyPayment"
+                hx-target="#monthlyPayment"
                 class="w-full block bg-transparent text-white border-b-2 border-white"
                 type="range"
                 name="downPayment"
                 id="downPayment"
                 min="0"
-                max="100"
+                value="0"
               />
             </div>
             <!-- Annual Taxes -->
@@ -140,12 +145,14 @@
               >
               <input
                 hx-post="/postMonthlyPayment"
+                hx-target="#monthlyPayment"
                 class="w-full block bg-transparent text-white border-b-2 border-white"
                 type="range"
                 name="annualTaxes"
                 id="annualTaxes"
-                min="0"
-                max="100"
+                min="0.0"
+                max="1.0"
+                step="0.01"
               />
             </div>
           </div>
@@ -156,12 +163,14 @@
             >
             <input
               hx-post="/postMonthlyPayment"
+              hx-target="#monthlyPayment"
               class="w-full block"
               type="range"
               name="interestRate"
               id="interestRate"
-              min="1"
-              max="100"
+              min="0.0"
+              max="12.0"
+              step="0.125"
             />
           </div>
 
@@ -177,10 +186,12 @@
                 >
                 <input
                   hx-post="/postMonthlyPayment"
+                  hx-target="#monthlyPayment"
                   class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
                   name="annualInsurance"
                   id="annualInsurance"
                   type="number"
+                  min="0"
                   onkeypress="return /[0-9]/i.test(event.key)"
                 />
               </div>
@@ -196,6 +207,7 @@
                 >
                 <input
                   hx-post="/postMonthlyPayment"
+                  hx-target="#monthlyPayment"
                   class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
                   name="monthlyHoa"
                   id="monthlyHoa"
@@ -208,19 +220,26 @@
         </div>
 
         <div class="col-span-1">
-          <h3 class="text-white"></h3>
+          <h3
+            class="text-white text-6xl text-center m-auto"
+            id="monthlyPayment"
+          >
+            $0.00
+          </h3>
         </div>
       </form>
     </section>
-    <form>
-      <input type="text" name="test" id="test" />
-      <button
-        hx-post="/test"
-        hx-trigger="click"
-        class="bg-blue-400 text-white text-lg px-4 py-6"
-      >
-        Submit
-      </button>
-    </form>
   </body>
+  <script>
+    const principalInput = document.getElementById("purchasePrice");
+    const downPaymentInput = document.getElementById("downPayment");
+    let principal = parseInt(principalInput.value);
+
+    principalInput.addEventListener("input", function () {
+      downPaymentInput.max = principal;
+      if (downPaymentInput.value > principal) {
+        downPaymentInput.value = principal;
+      }
+    });
+  </script>
 </html>
