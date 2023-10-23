@@ -151,8 +151,9 @@
                 name="annualTaxes"
                 id="annualTaxes"
                 min="0.0"
-                max="1.0"
-                step="0.01"
+                max="100.0"
+                step="0.5"
+                value="5.0"
               />
             </div>
           </div>
@@ -187,11 +188,13 @@
                 <input
                   hx-post="/postMonthlyPayment"
                   hx-target="#monthlyPayment"
+                  hx-trigger="keyup changed delay:0.25s"
                   class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
                   name="annualInsurance"
                   id="annualInsurance"
                   type="number"
                   min="0"
+                  value="0"
                   onkeypress="return /[0-9]/i.test(event.key)"
                 />
               </div>
@@ -208,10 +211,12 @@
                 <input
                   hx-post="/postMonthlyPayment"
                   hx-target="#monthlyPayment"
+                  hx-trigger="keyup changed delay:0.25s"
                   class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
                   name="monthlyHoa"
                   id="monthlyHoa"
                   type="number"
+                  value="0"
                   onkeypress="return /[0-9]/i.test(event.key)"
                 />
               </div>
@@ -223,6 +228,7 @@
           <h3
             class="text-white text-6xl text-center m-auto"
             id="monthlyPayment"
+            hx-get="/postMonthlyPayment"
           >
             $0.00
           </h3>
@@ -233,9 +239,18 @@
   <script>
     const principalInput = document.getElementById("purchasePrice");
     const downPaymentInput = document.getElementById("downPayment");
-    let principal = parseInt(principalInput.value);
+    const annualTaxesInput = document.getElementById("annualTaxes");
+
+    window.addEventListener("load", function () {
+      principalInput.value = 0;
+      downPaymentInput.value = 0;
+      annualTaxesInput.value = 0;
+      downPaymentInput.disabled = true;
+    });
 
     principalInput.addEventListener("input", function () {
+      let principal = parseInt(principalInput.value);
+      downPaymentInput.disabled = false;
       downPaymentInput.max = principal;
       if (downPaymentInput.value > principal) {
         downPaymentInput.value = principal;
