@@ -43,44 +43,60 @@ func main() {
 	s := &http.Server{Addr: ":8001", Handler: c.Handler(mux)}
 	
 	h1 := func(w http.ResponseWriter, r *http.Request) {
-		principal := r.PostFormValue("purchasePrice")
-		floatPrincipal, _ := strconv.ParseFloat(principal, 64)  
-		lengthOfMortgageInMonths := r.PostFormValue("mortgageTerm")
-		floatMortgageLength, _ := strconv.ParseFloat(lengthOfMortgageInMonths, 64)  
-		downPayment := r.PostFormValue("downPayment")
-		floatDownPayment, _ := strconv.ParseFloat(downPayment, 64)  
-		annualTaxes := r.PostFormValue("annualTaxes")
-		floatAnnualTaxes, _ := strconv.ParseFloat(annualTaxes, 64)  
-		interestRate := r.PostFormValue("interestRate")
-		floatInterestRate, _ := strconv.ParseFloat(interestRate, 64)  
-		annualInsurance := r.PostFormValue("annualInsurance")
-		floatAnnualInsurance, _ := strconv.ParseFloat(annualInsurance, 64)  
-		monthlyHoa := r.PostFormValue("monthlyHoa")
-		floatMonthlyHoa, _ := strconv.ParseFloat(monthlyHoa, 64)
+		principal, _ := strconv.ParseFloat(r.PostFormValue("purchasePrice"), 64) 
+		lengthOfMortgageInMonths, _ := strconv.ParseFloat(r.PostFormValue("mortgageTerm"), 64) 
+		downPayment, _ := strconv.ParseFloat(r.PostFormValue("downPayment"), 64)  
+		annualTaxes, _ := strconv.ParseFloat(r.PostFormValue("annualTaxes"), 64)  
+		interestRate, _ := strconv.ParseFloat(r.PostFormValue("interestRate"), 64) 
+		annualInsurance, _ := strconv.ParseFloat(r.PostFormValue("annualInsurance"), 64) 
+		monthlyHoa,  _ := strconv.ParseFloat(r.PostFormValue("monthlyHoa"), 64) 
 		
 		//Maths
-		principalMinusDownPayment := floatPrincipal - floatDownPayment
-		monthlyTaxes := (floatPrincipal/12) * (floatAnnualTaxes/100)
-		monthlyInsurance := floatAnnualInsurance/12
-		monthlyInterestRate := (floatInterestRate/100)/12
+		principalMinusDownPayment := principal - downPayment
+		monthlyPrincipal := principalMinusDownPayment / lengthOfMortgageInMonths
+		if math.IsNaN(monthlyPrincipal) {
+    		monthlyPrincipal = 0
+		}
+		
+		monthlyTaxes := (principal/12) * (annualTaxes/100)
+		monthlyInsurance := annualInsurance/12
+		monthlyInterestRate := (interestRate/100)/12
+		monthlyInterestPayment := monthlyPrincipal * monthlyInterestRate
+		monthlyPrincipalPlusInterest := monthlyPrincipal + monthlyInterestPayment
 		plusOneMonthlyInterestRate := 1 + monthlyInterestRate
-		exponentialByMortgageLength := math.Pow(plusOneMonthlyInterestRate, floatMortgageLength)
+		exponentialByMortgageLength := math.Pow(plusOneMonthlyInterestRate, lengthOfMortgageInMonths)
 
 		numerator := monthlyInterestRate * exponentialByMortgageLength
 		denominator := exponentialByMortgageLength - 1
 		division :=(principalMinusDownPayment*numerator)/denominator
 
-		monthlyMortgagePayment := division + monthlyInsurance + floatMonthlyHoa + monthlyTaxes
+		monthlyMortgagePayment := division + monthlyInsurance + monthlyHoa + monthlyTaxes
 
-		
-response := fmt.Sprintf(`
-<div class="col-span-1">
-	<h3 class="text-white text-6xl text-center m-auto" id="monthlyPayment">
-		$%.2f
-	</h3>
-</div>`, monthlyMortgagePayment)
+		if math.IsNaN(monthlyMortgagePayment) {
+    		monthlyMortgagePayment = 0
+		}
 
-fmt.Fprint(w, response)
+		response := fmt.Sprintf(`
+				<h3 class="text-white text-6xl text-center m-auto mb-2" >
+					$%.2f
+				</h3>
+				<div class="flex-grow">
+					<div class="grid grid-cols-2 gap-y-6">
+            			<p class="text-xl">Principal & Interest</p>
+            			<p class="text-right text-xl">$%.2f</p>
+            			<p class="text-xl">Monthly Taxes</p>
+            			<p class="text-right text-xl">$%.2f</p>
+            			<p class="text-xl">Monthly Insurance</p>
+            			<p class="text-right text-xl">$%.2f</p>
+            			<p class="text-xl">HOA</p>
+            			<p class="text-right text-xl">$%.2f</p>
+						<p class="text-center text-sm italic col-span-2">
+						Lorem ipsum dolor sit amet consectetur, adipisicing elit. Officia id aperiam quasi in deleniti voluptate rerum suscipit neque tenetur dignissimos voluptatibus doloremque beatae commodi corrupti, mollitia repudiandae blanditiis perferendis voluptas asperiores pariatur aliquam impedit cumque itaque? Distinctio perspiciatis sed voluptas!
+					  </p>
+					</div>
+				</div>`, monthlyMortgagePayment, monthlyPrincipalPlusInterest, monthlyTaxes, monthlyInsurance, monthlyHoa)
+
+		fmt.Fprint(w, response)
 	}
 
 	mux.HandleFunc("/postMonthlyPayment", h1)

@@ -28,7 +28,7 @@
     </style>
   </head>
   <body>
-    <section class="m-auto w-3/4 h-fit p-8 bg-black">
+    <section class="m-auto w-3/4 h-fit px-8 bg-black">
       <h1 class="text-center text-white text-5xl py-4">Mortgage Calculator</h1>
       <div class="m-auto text-center my-4">
         <ol class="text-white flex justify-center space-x-8">
@@ -76,175 +76,243 @@
         </p>
       </div>
 
-      <form class="m-auto grid grid-cols-3 gap-8">
-        <div class="col-span-2 px-12 border-r-2 my-4">
-          <div class="grid grid-cols-2 gap-8 my-6">
-            <div class="flex flex-col">
-              <label class="text-white mb-1" for="purchasePrice"
-                >Purchase Price</label
-              >
-              <div class="relative inline-block">
-                <span
-                  class="absolute left-2 top-1/4 translate-y-2/4 text-white text-xl -my-1.5"
-                  >$</span
+      <div class="m-auto grid grid-cols-3 gap-8">
+        <div class="col-span-2 flex">
+          <form class="col-span-2 flex-grow">
+            <div class="col-span-2 px-12 border-r-2 my-8">
+              <div class="grid grid-cols-2 gap-8 my-6">
+                <div class="flex flex-col">
+                  <label class="text-white mb-1" for="purchasePrice"
+                    >Purchase Price</label
+                  >
+                  <div class="relative inline-block">
+                    <span
+                      class="absolute left-2 top-1/4 translate-y-2/4 text-white text-xl -my-1.5"
+                      >$</span
+                    >
+                    <input
+                      hx-post="/postMonthlyPayment"
+                      hx-trigger="keyup changed delay:0.25s"
+                      hx-target="#monthlyPayment"
+                      class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+                      name="purchasePrice"
+                      id="purchasePrice"
+                      type="number"
+                      value="0"
+                      onkeypress="return /[0-9]/i.test(event.key)"
+                    />
+                  </div>
+                </div>
+                <div class="flex flex-col">
+                  <label class="text-white mb-1" for="mortgageTerm"
+                    >Mortgage Term</label
+                  >
+                  <select
+                    hx-post="/postMonthlyPayment"
+                    hx-target="#monthlyPayment"
+                    class="w-full block py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
+                    name="mortgageTerm"
+                    id="mortgageTerm"
+                  >
+                    <option
+                      class="bg-black text-white border-white"
+                      value="360"
+                    >
+                      30 years
+                    </option>
+                    <option
+                      class="bg-black text-white border-white"
+                      value="180"
+                    >
+                      15 years
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="grid grid-cols-2 gap-8 my-6">
+                <!-- Down Payment -->
+                <div class="flex flex-col">
+                  <label class="text-white mb-1" for="downPayment"
+                    >Down Payment</label
+                  >
+                  <input
+                    hx-post="/postMonthlyPayment"
+                    hx-target="#monthlyPayment"
+                    class="w-full block bg-transparent text-white border-b-2 border-white"
+                    type="range"
+                    name="downPayment"
+                    id="downPayment"
+                    min="0"
+                    value="0"
+                  />
+                  <span
+                    class="text-white mb-0.5"
+                    id="downPaymentPercent"
+                  ></span>
+                </div>
+                <!-- Annual Taxes -->
+                <div class="flex flex-col">
+                  <label class="text-white mb-1" for="annualTaxes"
+                    >Annual Taxes</label
+                  >
+                  <input
+                    hx-post="/postMonthlyPayment"
+                    hx-target="#monthlyPayment"
+                    class="w-full block bg-transparent text-white border-b-2 border-white"
+                    type="range"
+                    name="annualTaxes"
+                    id="annualTaxes"
+                    min="0.0"
+                    max="100.0"
+                    step="0.5"
+                    value="5.0"
+                  />
+                  <span
+                    class="text-white mb-0.5"
+                    id="annualTaxesPercent"
+                  ></span>
+                </div>
+              </div>
+              <!-- Interest Rate -->
+              <div class="my-6">
+                <label class="text-white mb-1" for="interestRate"
+                  >Interest Rate (%)</label
                 >
                 <input
                   hx-post="/postMonthlyPayment"
-                  hx-trigger="keyup changed delay:0.25s"
                   hx-target="#monthlyPayment"
-                  class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
-                  name="purchasePrice"
-                  id="purchasePrice"
-                  type="number"
-                  value="0"
-                  onkeypress="return /[0-9]/i.test(event.key)"
+                  class="w-full block"
+                  type="range"
+                  name="interestRate"
+                  id="interestRate"
+                  min="0.0"
+                  max="12.0"
+                  step="0.125"
                 />
+                <span class="text-white mb-0.5" id="interestRatePercent"></span>
               </div>
-            </div>
-            <div class="flex flex-col">
-              <label class="text-white mb-1" for="mortgageTerm"
-                >Mortgage Term</label
-              >
-              <select
-                hx-post="/postMonthlyPayment"
-                hx-target="#monthlyPayment"
-                class="w-full block py-2.5 px-0 text-sm text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
-                name="mortgageTerm"
-                id="mortgageTerm"
-              >
-                <option class="bg-black text-white border-white" value="360">
-                  30 years
-                </option>
-                <option class="bg-black text-white border-white" value="180">
-                  15 years
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-8 my-6">
-            <!-- Down Payment -->
-            <div class="flex flex-col">
-              <label class="text-white mb-1" for="downPayment"
-                >Down Payment</label
-              >
-              <input
-                hx-post="/postMonthlyPayment"
-                hx-target="#monthlyPayment"
-                class="w-full block bg-transparent text-white border-b-2 border-white"
-                type="range"
-                name="downPayment"
-                id="downPayment"
-                min="0"
-                value="0"
-              />
-            </div>
-            <!-- Annual Taxes -->
-            <div class="flex flex-col">
-              <label class="text-white mb-1" for="annualTaxes"
-                >Annual Taxes</label
-              >
-              <input
-                hx-post="/postMonthlyPayment"
-                hx-target="#monthlyPayment"
-                class="w-full block bg-transparent text-white border-b-2 border-white"
-                type="range"
-                name="annualTaxes"
-                id="annualTaxes"
-                min="0.0"
-                max="100.0"
-                step="0.5"
-                value="5.0"
-              />
-            </div>
-          </div>
-          <!-- Interest Rate -->
-          <div class="my-6">
-            <label class="text-white mb-1" for="interestRate"
-              >Interest Rate (%)</label
-            >
-            <input
-              hx-post="/postMonthlyPayment"
-              hx-target="#monthlyPayment"
-              class="w-full block"
-              type="range"
-              name="interestRate"
-              id="interestRate"
-              min="0.0"
-              max="12.0"
-              step="0.125"
-            />
-          </div>
 
-          <div class="grid grid-cols-2 gap-8 my-6">
-            <div class="flex flex-col">
-              <label class="text-white mb-1" for="annualInsurance"
-                >Annual Insurance</label
-              >
-              <div class="relative inline-block">
-                <span
-                  class="absolute left-2 top-1/4 translate-y-2/4 text-white text-xl -my-1.5"
-                  >$</span
-                >
+              <div class="grid grid-cols-2 gap-8 my-6">
+                <div class="flex flex-col">
+                  <label class="text-white mb-1" for="annualInsurance"
+                    >Annual Insurance</label
+                  >
+                  <div class="relative inline-block">
+                    <span
+                      class="absolute left-2 top-1/4 translate-y-2/4 text-white text-xl -my-1.5"
+                      >$</span
+                    >
+                    <input
+                      hx-post="/postMonthlyPayment"
+                      hx-target="#monthlyPayment"
+                      hx-trigger="keyup changed delay:0.25s"
+                      class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+                      name="annualInsurance"
+                      id="annualInsurance"
+                      type="number"
+                      min="0"
+                      value="0"
+                      onkeypress="return /[0-9]/i.test(event.key)"
+                    />
+                  </div>
+                </div>
+                <div class="flex flex-col">
+                  <label class="text-white mb-1" for="monthlyHoa"
+                    >Monthly HOA</label
+                  >
+                  <div class="relative inline-block">
+                    <span
+                      class="absolute left-2 top-1/4 translate-y-2/4 text-white text-xl -my-1.5"
+                      >$</span
+                    >
+                    <input
+                      hx-post="/postMonthlyPayment"
+                      hx-target="#monthlyPayment"
+                      hx-trigger="keyup changed delay:0.25s"
+                      class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+                      name="monthlyHoa"
+                      id="monthlyHoa"
+                      type="number"
+                      value="0"
+                      onkeypress="return /[0-9]/i.test(event.key)"
+                    />
+                  </div>
+                </div>
+              </div>
+              <p class="text-center text-white" for="email">
+                If you would like your results emailed to you, enter your email
+                below for future reference
+              </p>
+              <div class="flex items-center my-4">
                 <input
-                  hx-post="/postMonthlyPayment"
-                  hx-target="#monthlyPayment"
-                  hx-trigger="keyup changed delay:0.25s"
-                  class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
-                  name="annualInsurance"
-                  id="annualInsurance"
-                  type="number"
-                  min="0"
-                  value="0"
-                  onkeypress="return /[0-9]/i.test(event.key)"
+                  type="email"
+                  name="email"
+                  id="email"
+                  class="w-5/6 px-3 py-0.5 rounded-l-md border-gray-300 text-sm h-8"
+                  placeholder="Email Address"
                 />
+                <button
+                  class="bg-green-500 w-1/6 px-4 py-0.5 rounded-r-md text-white text-small hover:shadow-md transition-shadow ease-in duration-200 h-8"
+                  type="submit"
+                >
+                  Send Email
+                </button>
               </div>
             </div>
-            <div class="flex flex-col">
-              <label class="text-white mb-1" for="monthlyHoa"
-                >Monthly HOA</label
-              >
-              <div class="relative inline-block">
-                <span
-                  class="absolute left-2 top-1/4 translate-y-2/4 text-white text-xl -my-1.5"
-                  >$</span
-                >
-                <input
-                  hx-post="/postMonthlyPayment"
-                  hx-target="#monthlyPayment"
-                  hx-trigger="keyup changed delay:0.25s"
-                  class="w-full block border-white py-2.5 text-sm text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
-                  name="monthlyHoa"
-                  id="monthlyHoa"
-                  type="number"
-                  value="0"
-                  onkeypress="return /[0-9]/i.test(event.key)"
-                />
-              </div>
+          </form>
+        </div>
+
+        <div
+          class="col-span-1 text-white flex flex-col px-4 my-6"
+          id="monthlyPayment"
+        >
+          <h3 class="text-white text-6xl text-center m-auto mb-2">$0.00</h3>
+          <div class="flex-grow">
+            <div class="grid grid-cols-2 gap-y-6">
+              <p class="text-xl">Principal & Interest</p>
+              <p class="text-right text-xl">$0.00</p>
+              <p class="text-xl">Monthly Taxes</p>
+              <p class="text-right text-xl">$0.00</p>
+              <p class="text-xl">Monthly Insurance</p>
+              <p class="text-right text-xl">$0.00</p>
+              <p class="text-xl">HOA</p>
+              <p class="text-right text-xl">$0.00</p>
+              <p class="text-center text-sm italic col-span-2">
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit.
+                Officia id aperiam quasi in deleniti voluptate rerum suscipit
+                neque tenetur dignissimos voluptatibus doloremque beatae commodi
+                corrupti, mollitia repudiandae blanditiis perferendis voluptas
+                asperiores pariatur aliquam impedit cumque itaque? Distinctio
+                perspiciatis sed voluptas!
+              </p>
             </div>
           </div>
         </div>
-
-        <div class="col-span-1">
-          <h3
-            class="text-white text-6xl text-center m-auto"
-            id="monthlyPayment"
-            hx-get="/postMonthlyPayment"
-          >
-            $0.00
-          </h3>
-        </div>
-      </form>
+      </div>
     </section>
   </body>
   <script>
     const principalInput = document.getElementById("purchasePrice");
     const downPaymentInput = document.getElementById("downPayment");
     const annualTaxesInput = document.getElementById("annualTaxes");
+    const annualInsuranceInput = document.getElementById("annualInsurance");
+    const monthlyHoaInput = document.getElementById("monthlyHoa");
+    const interestRateInput = document.getElementById("interestRate");
+    const interestRatePercentSpan = document.getElementById(
+      "interestRatePercent"
+    );
+    const annualTaxesPercentSpan =
+      document.getElementById("annualTaxesPercent");
+    const downPaymentSpan = document.getElementById("downPaymentPercent");
 
     window.addEventListener("load", function () {
       principalInput.value = 0;
       downPaymentInput.value = 0;
       annualTaxesInput.value = 0;
+      annualInsuranceInput.value = 0;
+      monthlyHoaInput.value = 0;
+      interestRatePercentSpan.innerHTML = `${interestRateInput.value}%`;
+      annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
       downPaymentInput.disabled = true;
     });
 
@@ -255,6 +323,21 @@
       if (downPaymentInput.value > principal) {
         downPaymentInput.value = principal;
       }
+    });
+
+    interestRateInput.addEventListener("change", function () {
+      interestRatePercentSpan.innerHTML = `${interestRateInput.value}%`;
+    });
+
+    annualTaxesInput.addEventListener("change", function () {
+      annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
+    });
+
+    downPaymentInput.addEventListener("change", function () {
+      let principal = parseInt(principalInput.value);
+      let downPayment = parseInt(downPaymentInput.value);
+      let percentOfPrincipal = (downPayment / principal) * 100;
+      downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(2)}%`;
     });
   </script>
 </html>
