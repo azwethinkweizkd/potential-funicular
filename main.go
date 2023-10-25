@@ -15,7 +15,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gotailwindcss/tailwind/twembed"
 	"github.com/gotailwindcss/tailwind/twhandler"
-	"github.com/joho/godotenv"
 	"github.com/rs/cors"
 	"github.com/trycourier/courier-go/v2"
 )
@@ -35,13 +34,6 @@ type SavedMortgageInfo struct {
     DateCreated          time.Time
 }
 
-func init() {
-    // loads values from .env into the system
-    if err := godotenv.Load(); err != nil {
-        log.Print("No .env file found")
-    }
-}
-
 func division(n, d float64) (float64, error) {
 	if d == 0 {
 		return 0, errors.New("Can't divide by zero")
@@ -55,6 +47,8 @@ func multiply(n, d float64) float64 {
 }
 
 func sendEmail(email string, i SavedMortgageInfo) (string, error) {
+	os.Setenv("COURIER_API_KEY", "")
+    os.Setenv("COURIER_TEMPLATE_ID", "")
 	courierApiKey := os.Getenv("COURIER_API_KEY")
 	courierTemplateId := os.Getenv("COURIER_TEMPLATE_ID")
 	client := courier.CreateClient(courierApiKey, nil)
@@ -89,13 +83,8 @@ func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 }
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
+	os.Setenv("JAWSDB_URL", "")
     loanType := r.URL.Query().Get("loanType")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-    // db, err := sql.Open("mysql", fmt.Sprintf("root:%s@tcp(127.0.0.1:3306)/saved_user_mortgagedb", dbPassword))
-    // if err != nil {
-    //     http.Error(w, err.Error(), http.StatusInternalServerError)
-    //     return
-    // }
     dbURL := os.Getenv("JAWSDB_URL")
 	log.Println(dbURL)
     db, err := sql.Open("mysql", dbURL)
@@ -117,7 +106,6 @@ func getLoanDescription(w http.ResponseWriter, r *http.Request) {
 }
 
 func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
-	//dbPassword := os.Getenv("DB_PASSWORD")
 	principal, _ := strconv.ParseFloat(r.PostFormValue("purchasePrice"), 64) 
 	lengthOfMortgageInMonths, _ := strconv.ParseFloat(r.PostFormValue("mortgageTerm"), 64) 
 	downPayment, _ := strconv.ParseFloat(r.PostFormValue("downPayment"), 64)  
@@ -126,7 +114,7 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 	annualInsurance, _ := strconv.ParseFloat(r.PostFormValue("annualInsurance"), 64) 
 	monthlyHoa, _ := strconv.ParseFloat(r.PostFormValue("monthlyHoa"), 64) 
 	email := r.PostFormValue("email")
-	//Maths
+
 	principalMinusDownPayment := principal - downPayment
 	taxPercent, _ := division(annualTaxes, 100)
 	yearlyTaxes := multiply(principal, taxPercent)
@@ -148,10 +136,6 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 		monthlyMortgagePayment = 0
 	}
 
-	// db, err := sql.Open("mysql", fmt.Sprintf("root:%s@tcp(127.0.0.1:3306)/saved_user_mortgagedb", dbPassword))
-	// if err != nil {
-    //     panic(err.Error())
-    // }
 	dbURL := os.Getenv("JAWSDB_URL")
 
     db, err := sql.Open("mysql", dbURL)
@@ -213,7 +197,7 @@ func postMonthlyPayment(w http.ResponseWriter, r *http.Request) {
 	interestRate, _ := strconv.ParseFloat(r.PostFormValue("interestRate"), 64) 
 	annualInsurance, _ := strconv.ParseFloat(r.PostFormValue("annualInsurance"), 64) 
 	monthlyHoa,  _ := strconv.ParseFloat(r.PostFormValue("monthlyHoa"), 64) 
-	//Maths
+
 	principalMinusDownPayment := principal - downPayment
 	monthlyPrincipal, _ := division(principalMinusDownPayment, lengthOfMortgageInMonths)
 	taxPercent, _ := division(annualTaxes, 100)
