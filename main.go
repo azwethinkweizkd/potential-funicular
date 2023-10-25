@@ -182,12 +182,12 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		log.Println("Email failed to send")
-		message := fmt.Sprintf(`<p id="message" class="text-red">
-		Email failed to send X</p>`)
+		message := fmt.Sprintf(`<p id="message" class="text-red-600 text-center">
+		Email failed to send &#10060</p>`)
     	fmt.Fprint(w, message)
 	} else {
 		log.Println(reqId)
-		message := fmt.Sprintf(`<p id="message" class="text-white">
+		message := fmt.Sprintf(`<p id="message" class="text-green-300 text-center">
 		Email sent successfully &#x2713;</p>`)
     	fmt.Fprint(w, message)
 	}
