@@ -80,14 +80,15 @@ func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 }
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
-    loanType := r.URL.Query().Get("loanType")
-    dbURL := os.Getenv("JAWSDB_URL")
+	dbURL := os.Getenv("JAWSDB_URL")
 
     db, err := sql.Open("mysql", dbURL)
     if err != nil {
         log.Fatal(err)
     }
     defer db.Close()
+
+	loanType := r.URL.Query().Get("loanType")
 
     query := "SELECT description FROM loans WHERE loan_type = ?"
     var description string
@@ -139,6 +140,8 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
         log.Fatal(err)
     }
 
+	defer db.Close()
+
 	principalStr := strconv.FormatFloat(principal, 'f', 2, 64)
 	mortgageTermStr := strconv.FormatFloat(lengthOfMortgageInMonths/12, 'f', -1, 64)
 	downPaymentStr := strconv.FormatFloat(downPayment, 'f', 2, 64)
@@ -167,8 +170,6 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
-	defer db.Close()
 
 	reqId, err := sendEmail(email, info)
 
@@ -257,7 +258,6 @@ func main() {
 	mux.HandleFunc("/getLoanDescription", getLoanDescription)
 	mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
 	mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
-    
-	fmt.Println("Now listening on: http://localhost:" + port)
+
 	log.Fatal(s.ListenAndServe())
 }
