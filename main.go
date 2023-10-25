@@ -54,7 +54,7 @@ func multiply(n, d float64) float64 {
 	return n * d
 }
 
-func sendEmail(email, monthlyMortgagePayment, principal, interestRate, downPayment, mortgageTerm, annualTaxes, annualInsurance, monthlyHOA string) (string, error) {
+func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 	courierApiKey := os.Getenv("COURIER_API_KEY")
 	courierTemplateId := os.Getenv("COURIER_TEMPLATE_ID")
 	client := courier.CreateClient(courierApiKey, nil)
@@ -66,14 +66,14 @@ func sendEmail(email, monthlyMortgagePayment, principal, interestRate, downPayme
 			},
 			"template": courierTemplateId,
 			"data": map[string]interface{}{
-				"monthlyMortgagePayment": monthlyMortgagePayment,
-				"principal":            principal,
-				"interestRate":         interestRate,
-				"downPayment":          downPayment,
-				"mortgageTerm":         mortgageTerm,
-				"annualTaxes":          annualTaxes,
-				"annualInsurance":      annualInsurance,
-				"monthlyHOA":           monthlyHOA,
+				"monthlyMortgagePayment": i.MonthlyMortgagePayment,
+				"principal":              i.Principal,
+				"interestRate":           i.InterestRate,
+				"downPayment":            i.DownPayment,
+				"mortgageTerm":           i.MortgageTerm,
+				"annualTaxes":            i.AnnualTaxes,
+				"annualInsurance":        i.AnnualInsurance,
+				"monthlyHOA":             i.MonthlyHOA,
 			},
 		},
 	}
@@ -97,7 +97,7 @@ func getLoanDescription(w http.ResponseWriter, r *http.Request) {
     //     return
     // }
     dbURL := os.Getenv("JAWSDB_URL")
-
+	log.Println(dbURL)
     db, err := sql.Open("mysql", dbURL)
     if err != nil {
         log.Fatal(err)
@@ -190,7 +190,7 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 
 	defer db.Close()
 
-	reqId, err := sendEmail(email, monthlyMortgagePaymentStr, principalStr, interestRateStr, downPaymentStr, mortgageTermStr, annualTaxesStr, annualInsuranceStr, monthlyHoaStr)
+	reqId, err := sendEmail(email, info)
 
 	if err != nil {
 		log.Println("Email failed to send")
