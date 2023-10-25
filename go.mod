@@ -10,6 +10,7 @@ require (
 
 require (
 	github.com/cespare/xxhash v1.1.0 // indirect
+	github.com/lib/pq v1.10.9 // indirect
 	github.com/rs/cors v1.10.1 // indirect
 	github.com/tdewolff/parse/v2 v2.5.0 // indirect
 	github.com/trycourier/courier-go/v2 v2.11.0 // indirect
