@@ -260,12 +260,16 @@ func main() {
 		AllowedHeaders: []string{"*"},
 	})
 
-	s := &http.Server{Addr: ":8001", Handler: c.Handler(mux)}
+	port := os.Getenv("PORT")
+	if port == "" {
+    	log.Fatal("$PORT must be set")
+	}
+
+	s := &http.Server{Addr: ":" + port, Handler: c.Handler(mux)}
 
 	mux.HandleFunc("/getLoanDescription", getLoanDescription)
 	mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
 	mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
-    
-	fmt.Println("Now listening on: http://localhost:8001")
+
 	log.Fatal(s.ListenAndServe())
 }
