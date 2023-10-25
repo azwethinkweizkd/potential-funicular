@@ -96,7 +96,7 @@ func getLoanDescription(w http.ResponseWriter, r *http.Request) {
     //     http.Error(w, err.Error(), http.StatusInternalServerError)
     //     return
     // }
-    dbURL := os.Getenv("DATABASE_URL")
+    dbURL := os.Getenv("JAWSDB_URL")
 
     db, err := sql.Open("mysql", dbURL)
     if err != nil {
@@ -152,7 +152,7 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 	// if err != nil {
     //     panic(err.Error())
     // }
-	dbURL := os.Getenv("DATABASE_URL")
+	dbURL := os.Getenv("JAWSDB_URL")
 
     db, err := sql.Open("mysql", dbURL)
     if err != nil {
