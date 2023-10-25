@@ -15,7 +15,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/gotailwindcss/tailwind/twembed"
 	"github.com/gotailwindcss/tailwind/twhandler"
-	"github.com/rs/cors"
 	"github.com/trycourier/courier-go/v2"
 )
 
@@ -251,18 +250,12 @@ func main() {
 	mux.Handle("/", http.FileServer(http.Dir("static")))
 	mux.Handle("/css/", twhandler.New(http.Dir("css"), "/css", twembed.New()))
 
-	c := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"}, // Allow all origins in development
-		AllowedMethods: []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders: []string{"*"},
-	})
-
 	port := os.Getenv("PORT")
 		if port == "" {
     	log.Fatal("$PORT must be set")
 	}
 
-	s := &http.Server{Addr: ":" + port, Handler: c.Handler(mux)}
+	s := &http.Server{Addr: ":" + port, Handler: mux}
 
 	mux.HandleFunc("/getLoanDescription", getLoanDescription)
 	mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
