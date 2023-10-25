@@ -30,7 +30,7 @@
   </head>
   <body class="bg-slate-400">
     <section
-      class="mx-auto my-6 w-3/4 h-fit px-8 bg-neutral-900 shadow-black drop-shadow-lg rounded-xl"
+      class="mx-auto my-6 w-3/4 h-fit px-8 sm:h-100 sm:my-0 bg-neutral-900 shadow-black shadow-lg rounded-xl z-0"
     >
       <h1 class="text-center text-white text-5xl py-4">Mortgage Calculator</h1>
       <div class="m-auto text-center my-4">
@@ -88,7 +88,7 @@
         </ol>
         <p
           id="loan-description"
-          class="m-auto w-2/3 text-white my-6 h-24"
+          class="m-auto w-2/3 text-white my-2 h-24 place-items-center"
           hx-get="/getLoanDescription?loanType=conventional"
           hx-swap="innerHTML"
           hx-trigger="load"
@@ -98,7 +98,7 @@
       <div class="m-auto grid grid-cols-3 gap-8">
         <div class="col-span-2 flex">
           <form class="col-span-2 flex-grow">
-            <div class="col-span-2 px-12 border-r-2 my-8">
+            <div class="col-span-2 px-12 border-r-2 my-8 sm:px-6">
               <div class="grid grid-cols-2 gap-8 my-6 pt-4">
                 <div class="flex flex-col">
                   <label class="text-white mb-1" for="purchasePrice"
@@ -303,18 +303,23 @@
                   placeholder="Email Address"
                 />
                 <button
+                  hx-post="/postSendEmailAndSaveInDb"
+                  hx-target="#emailAttemptResponse"
+                  id="sendButton"
                   class="bg-violet-600 w-1/6 px-4 py-0.5 rounded-r-md text-white text-small hover:shadow-md transition-shadow ease-in duration-200 h-8"
                   type="submit"
+                  disabled
                 >
                   Send Email
                 </button>
               </div>
+              <div id="emailAttemptResponse"></div>
             </div>
           </form>
         </div>
 
         <div
-          class="col-span-1 text-white flex flex-col px-4 my-6"
+          class="col-span-1 text-white flex flex-col px-4 my-6 sm:px-2 sm:my-3"
           id="monthlyPayment"
         >
           <h3 class="text-white text-6xl text-center m-auto mb-8">$0.00</h3>
@@ -328,7 +333,9 @@
               <p class="text-right text-xl">$0.00</p>
               <p class="text-xl">HOA</p>
               <p class="text-right text-xl">$0.00</p>
-              <p class="text-center text-sm italic col-span-2">
+              <p
+                class="text-center text-sm italic col-span-2 sm:text-xs sm:leading-relaxed"
+              >
                 Please note that the mortgage calculator on our website provides
                 estimates for general informational purposes only. For
                 personalized guidance and accurate loan information, we
@@ -371,6 +378,20 @@
       downPaymentInput.disabled = true;
     });
 
+    document.getElementById("email").addEventListener("input", function () {
+      const emailInput = this.value.trim();
+      const sendButton = document.getElementById("sendButton");
+      const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+
+      if (emailInput.match(emailPattern)) {
+        // Enable the button if the email is valid
+        sendButton.disabled = false;
+      } else {
+        // Disable the button if the email is not valid
+        sendButton.disabled = true;
+      }
+    });
+
     principalInput.addEventListener("input", function () {
       let principal = parseInt(principalInput.value);
       let annualTaxesPercent = parseInt(annualTaxesInput.value) / 100;
@@ -398,10 +419,14 @@
       let downPayment = parseInt(downPaymentInput.value);
       let percentOfPrincipal = (downPayment / principal) * 100;
       downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
-      downPaymentNumInput.value = downPaymentInput.value;
+      downPaymentNumInput.value = downPayment;
     });
 
     downPaymentNumInput.addEventListener("input", function () {
+      let principal = parseInt(principalInput.value);
+      let downPayment = parseInt(downPaymentNumInput.value);
+      let percentOfPrincipal = (downPayment / principal) * 100;
+      downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
       downPaymentInput.value = downPaymentNumInput.value;
     });
   </script>
