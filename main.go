@@ -46,8 +46,6 @@ func multiply(n, d float64) float64 {
 }
 
 func sendEmail(email string, i SavedMortgageInfo) (string, error) {
-	os.Setenv("COURIER_API_KEY", "")
-    os.Setenv("COURIER_TEMPLATE_ID", "")
 	courierApiKey := os.Getenv("COURIER_API_KEY")
 	courierTemplateId := os.Getenv("COURIER_TEMPLATE_ID")
 	client := courier.CreateClient(courierApiKey, nil)
@@ -82,10 +80,9 @@ func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 }
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
-	os.Setenv("JAWSDB_URL", "")
     loanType := r.URL.Query().Get("loanType")
     dbURL := os.Getenv("JAWSDB_URL")
-	log.Println(dbURL)
+
     db, err := sql.Open("mysql", dbURL)
     if err != nil {
         log.Fatal(err)
