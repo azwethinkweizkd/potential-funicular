@@ -12,10 +12,10 @@ import (
 	"strconv"
 	"time"
 
+	_ "github.com/go-sql-driver/mysql"
 	"github.com/gotailwindcss/tailwind/twembed"
 	"github.com/gotailwindcss/tailwind/twhandler"
 	"github.com/joho/godotenv"
-	_ "github.com/lib/pq"
 	"github.com/rs/cors"
 	"github.com/trycourier/courier-go/v2"
 )
@@ -90,18 +90,24 @@ func sendEmail(email, monthlyMortgagePayment, principal, interestRate, downPayme
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
     loanType := r.URL.Query().Get("loanType")
-	dbURL := os.Getenv("DATABASE_URL")
-    db, err := sql.Open("postgres", dbURL)
+	// dbPassword := os.Getenv("DB_PASSWORD")
+    // db, err := sql.Open("mysql", fmt.Sprintf("root:%s@tcp(127.0.0.1:3306)/saved_user_mortgagedb", dbPassword))
+    // if err != nil {
+    //     http.Error(w, err.Error(), http.StatusInternalServerError)
+    //     return
+    // }
+    dbURL := os.Getenv("DATABASE_URL")
+
+    db, err := sql.Open("mysql", dbURL)
     if err != nil {
-        http.Error(w, err.Error(), http.StatusInternalServerError)
-        return
+        log.Fatal(err)
     }
-    
+    defer db.Close()
 
-    query := "SELECT description FROM loans WHERE loan_type = $1"
-	var description string
+    query := "SELECT description FROM loans WHERE loan_type = ?"
+    var description string
 
-	err = db.QueryRow(query, loanType).Scan(&description)
+    err = db.QueryRow(query, loanType).Scan(&description)
     if err != nil {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
@@ -111,6 +117,7 @@ func getLoanDescription(w http.ResponseWriter, r *http.Request) {
 }
 
 func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
+	//dbPassword := os.Getenv("DB_PASSWORD")
 	principal, _ := strconv.ParseFloat(r.PostFormValue("purchasePrice"), 64) 
 	lengthOfMortgageInMonths, _ := strconv.ParseFloat(r.PostFormValue("mortgageTerm"), 64) 
 	downPayment, _ := strconv.ParseFloat(r.PostFormValue("downPayment"), 64)  
@@ -140,10 +147,16 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 	if math.IsNaN(monthlyMortgagePayment) {
 		monthlyMortgagePayment = 0
 	}
+
+	// db, err := sql.Open("mysql", fmt.Sprintf("root:%s@tcp(127.0.0.1:3306)/saved_user_mortgagedb", dbPassword))
+	// if err != nil {
+    //     panic(err.Error())
+    // }
 	dbURL := os.Getenv("DATABASE_URL")
-    db, err := sql.Open("postgres", dbURL)
-	if err != nil {
-        panic(err.Error())
+
+    db, err := sql.Open("mysql", dbURL)
+    if err != nil {
+        log.Fatal(err)
     }
 
 	principalStr := strconv.FormatFloat(principal, 'f', 2, 64)
@@ -168,7 +181,7 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 		DateCreated:          	time.Now(),
 	}
 
-	insertQuery := "INSERT INTO MortgageInfo (monthly_mortgage_payment, principal, mortgage_term, annual_taxes, down_payment, interest_rate, annual_insurance, monthly_hoa, email, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
+	insertQuery := "INSERT INTO MortgageInfo (monthly_mortgage_payment, principal, mortgage_term, annual_taxes, down_payment, interest_rate, annual_insurance, monthly_hoa, email, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
 	_, err = db.Exec(insertQuery, info.MonthlyMortgagePayment, info.Principal, info.MortgageTerm, info.AnnualTaxes, info.DownPayment, info.InterestRate, info.AnnualInsurance, info.MonthlyHOA, info.Email, info.DateCreated)
 
 	if err != nil {
@@ -261,7 +274,7 @@ func main() {
 	})
 
 	port := os.Getenv("PORT")
-	if port == "" {
+		if port == "" {
     	log.Fatal("$PORT must be set")
 	}
 
@@ -270,6 +283,7 @@ func main() {
 	mux.HandleFunc("/getLoanDescription", getLoanDescription)
 	mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
 	mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
-
+    
+	fmt.Println("Now listening on: http://localhost:" + port)
 	log.Fatal(s.ListenAndServe())
 }
