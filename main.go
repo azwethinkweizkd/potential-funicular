@@ -6,7 +6,6 @@ import (
 	"errors"
 	"fmt"
 	"log"
-	"main/seeds"
 	"math"
 	"net/http"
 	"os"
@@ -250,18 +249,6 @@ func main() {
 		if port == "" {
     	log.Fatal("$PORT must be set")
 	}
-	
-	dbURL := os.Getenv("JAWSDB_URL")
-	db, err := sql.Open("mysql", dbURL)
-	if err != nil {
-        log.Fatal(err)
-    }
-    defer db.Close()
-
-	if err := seeds.SeedDatabase(db); err != nil {
-        log.Fatal(err)
-    }
-
 
 	s := &http.Server{Addr: ":" + port, Handler: mux}
 
