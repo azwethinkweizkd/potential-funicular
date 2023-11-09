@@ -1,4 +1,4 @@
-// seeds/seed.go
+// File: seeds.go
 
 package seeds
 

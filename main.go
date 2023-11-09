@@ -6,6 +6,7 @@ import (
 	"errors"
 	"fmt"
 	"log"
+	"main/seeds"
 	"math"
 	"net/http"
 	"os"
@@ -81,7 +82,6 @@ func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
 	dbURL := os.Getenv("JAWSDB_URL")
-	log.Println("Line 84 main.go:" + dbURL)
     db, err := sql.Open("mysql", dbURL)
     if err != nil {
         log.Fatal(err)
@@ -89,10 +89,8 @@ func getLoanDescription(w http.ResponseWriter, r *http.Request) {
     defer db.Close()
 
 	loanType := r.URL.Query().Get("loanType")
-	log.Println("Loan type from url:" + dbURL)
     query := "SELECT description FROM loans WHERE loan_type = ?"
     var description string
-	log.Println("Loan type from url:" + description)
     err = db.QueryRow(query, loanType).Scan(&description)
     if err != nil {
         http.Error(w, err.Error(), http.StatusNotFound)
@@ -252,6 +250,18 @@ func main() {
 		if port == "" {
     	log.Fatal("$PORT must be set")
 	}
+	
+	dbURL := os.Getenv("JAWSDB_URL")
+	db, err := sql.Open("mysql", dbURL)
+	if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
+	if err := seeds.SeedDatabase(db); err != nil {
+        log.Fatal(err)
+    }
+
 
 	s := &http.Server{Addr: ":" + port, Handler: mux}
 
