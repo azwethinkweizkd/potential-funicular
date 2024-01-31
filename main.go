@@ -19,6 +19,44 @@ import (
 	"github.com/trycourier/courier-go/v2"
 )
 
+var db *sql.DB
+
+func initDB() *sql.DB {
+	err := godotenv.Load()
+	postgresHost := os.Getenv("POSTGRES_HOST")
+	postgresPort := os.Getenv("POSTGRES_PORT")
+	postgresUser := os.Getenv("POSTGRES_USER")
+	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
+	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
+
+	port, err := strconv.Atoi(postgresPort)
+    if err != nil {
+        fmt.Println("Error converting port to integer:", err)
+        
+    }
+
+	var (
+		host     = postgresHost
+		portInt  = port
+		user     = postgresUser
+		password = postgresPassword
+		dbName   = postgresDBName
+	)
+
+	
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+        "password=%s dbname=%s sslmode=disable",
+        host, portInt, user, password, dbName)
+
+    db, err := sql.Open("postgres", psqlInfo)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    return db
+}
+
 type SavedMortgageInfo struct {
     ID                  int
     MonthlyMortgagePayment string
@@ -45,6 +83,7 @@ func division(n, d float64) (float64, error) {
 func multiply(n, d float64) float64 {
 	return n * d
 }
+
 
 func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 
@@ -84,37 +123,11 @@ func sendEmail(email string, i SavedMortgageInfo) (string, error) {
 }
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
-	err := godotenv.Load()
-	if err != nil {
-	  log.Fatal("Error loading .env file")
-	}
-	postgresUser := os.Getenv("POSTGRES_USER")
-	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
-	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
-
-	var (
-		host     = "localhost"
-		port     = 5432
-		user     = postgresUser
-		password = postgresPassword
-		dbName   = postgresDBName
-	)
-
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-        "password=%s dbname=%s sslmode=disable",
-        host, port, user, password, dbName)
-
-    db, err := sql.Open("postgres", psqlInfo)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer db.Close()
-
 	loanType := r.URL.Query().Get("loanType")
     query := "SELECT description FROM loans WHERE loan_type = $1"
 	var description string
 
-	err = db.QueryRow(query, loanType).Scan(&description)
+	err := db.QueryRow(query, loanType).Scan(&description)
     if err != nil {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
@@ -154,33 +167,6 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 		monthlyMortgagePayment = 0
 	}
 
-		err := godotenv.Load()
-	if err != nil {
-	  log.Fatal("Error loading .env file")
-	}
-	postgresUser := os.Getenv("POSTGRES_USER")
-	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
-	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
-
-	var (
-		host     = "localhost"
-		port     = 5432
-		user     = postgresUser
-		password = postgresPassword
-		dbName   = postgresDBName
-	)
-
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-        "password=%s dbname=%s sslmode=disable",
-        host, port, user, password, dbName)
-
-    db, err := sql.Open("postgres", psqlInfo)
-    if err != nil {
-        log.Fatal(err)
-    }
-
-	defer db.Close()
-
 	principalStr := strconv.FormatFloat(principal, 'f', 2, 64)
 	mortgageTermStr := strconv.FormatFloat(lengthOfMortgageInMonths/12, 'f', -1, 64)
 	downPaymentStr := strconv.FormatFloat(downPayment, 'f', 2, 64)
@@ -204,7 +190,7 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 	}
 
 	insertQuery := "INSERT INTO MortgageInfo (monthly_mortgage_payment, principal, mortgage_term, annual_taxes, down_payment, interest_rate, annual_insurance, monthly_hoa, email, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
-	_, err = db.Exec(insertQuery, info.MonthlyMortgagePayment, info.Principal, info.MortgageTerm, info.AnnualTaxes, info.DownPayment, info.InterestRate, info.AnnualInsurance, info.MonthlyHOA, info.Email, info.DateCreated)
+	_, err := db.Exec(insertQuery, info.MonthlyMortgagePayment, info.Principal, info.MortgageTerm, info.AnnualTaxes, info.DownPayment, info.InterestRate, info.AnnualInsurance, info.MonthlyHOA, info.Email, info.DateCreated)
 
 	if err != nil {
 		panic(err)
@@ -333,44 +319,8 @@ func createTables(db *sql.DB) error {
 }
 
 func seedDb() {
-	err := godotenv.Load()
-	if err != nil {
-	  log.Fatal("Error loading .env file")
-	}
-	postgresHost := os.Getenv("POSTGRES_HOST")
-	postgresPort := os.Getenv("POSTGRES_PORT")
-	postgresUser := os.Getenv("POSTGRES_USER")
-	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
-	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
-
-	port, err := strconv.Atoi(postgresPort)
-    if err != nil {
-        fmt.Println("Error converting port to integer:", err)
-        return
-    }
-
-	var (
-		host     = postgresHost
-		portInt  = port
-		user     = postgresUser
-		password = postgresPassword
-		dbName   = postgresDBName
-	)
-
-	
-
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-        "password=%s dbname=%s sslmode=disable",
-        host, portInt, user, password, dbName)
-
-    db, err := sql.Open("postgres", psqlInfo)
-    if err != nil {
-        log.Fatal(err)
-    }
-    defer db.Close()
-
     // Verify the connection
-    err = db.Ping()
+    err := db.Ping()
     if err != nil {
         log.Fatal(err)
     }
@@ -421,6 +371,8 @@ func getPort() string {
 
 
 func main() {
+	db = initDB()
+    defer db.Close()
 	fmt.Println("Mortgage Calculator")
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir("static")))
