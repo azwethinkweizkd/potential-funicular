@@ -12,9 +12,10 @@ import (
 	"strconv"
 	"time"
 
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gotailwindcss/tailwind/twembed"
 	"github.com/gotailwindcss/tailwind/twhandler"
+	"github.com/joho/godotenv"
+	_ "github.com/lib/pq"
 	"github.com/trycourier/courier-go/v2"
 )
 
@@ -46,51 +47,78 @@ func multiply(n, d float64) float64 {
 }
 
 func sendEmail(email string, i SavedMortgageInfo) (string, error) {
-	courierApiKey := os.Getenv("COURIER_API_KEY")
-	courierTemplateId := os.Getenv("COURIER_TEMPLATE_ID")
-	client := courier.CreateClient(courierApiKey, nil)
+    err := godotenv.Load()
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
 
-	request := courier.SendMessageRequestBody{
-		Message: map[string]interface{}{
-			"to": map[string]string{
-				"email": email,
-			},
-			"template": courierTemplateId,
-			"data": map[string]interface{}{
-				"monthlyMortgagePayment": i.MonthlyMortgagePayment,
-				"principal":              i.Principal,
-				"interestRate":           i.InterestRate,
-				"downPayment":            i.DownPayment,
-				"mortgageTerm":           i.MortgageTerm,
-				"annualTaxes":            i.AnnualTaxes,
-				"annualInsurance":        i.AnnualInsurance,
-				"monthlyHOA":             i.MonthlyHOA,
-			},
-		},
-	}
+    courierApiKey := os.Getenv("COURIER_API_KEY")
+    courierTemplateId := os.Getenv("COURIER_TEMPLATE_ID")
 
-	requestID, err := client.SendMessage(context.Background(), request)
+    client := courier.CreateClient(courierApiKey, nil)
 
-	if err != nil {
-		log.Println(err)
-		return "Failed to send email", err
-	}
+    request := courier.SendMessageRequestBody{
+        Message: map[string]interface{}{
+            "to": map[string]string{
+                "email": email,
+            },
+            "template": courierTemplateId,
+            "data": map[string]interface{}{
+                "monthlyMortgagePayment": i.MonthlyMortgagePayment,
+                "principal":              i.Principal,
+                "interestRate":           i.InterestRate,
+                "downPayment":            i.DownPayment,
+                "mortgageTerm":           i.MortgageTerm,
+                "annualTaxes":            i.AnnualTaxes,
+                "annualInsurance":        i.AnnualInsurance,
+                "monthlyHOA":             i.MonthlyHOA,
+            },
+        },
+    }
 
-	return requestID, nil
+    // Send the message
+    requestID, err := client.SendMessage(context.Background(), request)
+    if err != nil {
+        log.Printf("Failed to send email: %v", err)
+        return "", err
+    }
+
+    log.Printf("Email sent successfully, request ID: %s", requestID)
+    return requestID, nil
 }
 
 func getLoanDescription(w http.ResponseWriter, r *http.Request) {
-	dbURL := os.Getenv("JAWSDB_URL")
-    db, err := sql.Open("mysql", dbURL)
+	err := godotenv.Load()
+	if err != nil {
+	  log.Fatal("Error loading .env file")
+	}
+	postgresUser := os.Getenv("POSTGRES_USER")
+	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
+	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
+
+	var (
+		host     = "localhost"
+		port     = 5432
+		user     = postgresUser
+		password = postgresPassword
+		dbName   = postgresDBName
+	)
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+        "password=%s dbname=%s sslmode=disable",
+        host, port, user, password, dbName)
+
+    db, err := sql.Open("postgres", psqlInfo)
     if err != nil {
         log.Fatal(err)
     }
     defer db.Close()
 
 	loanType := r.URL.Query().Get("loanType")
-    query := "SELECT description FROM loans WHERE loan_type = ?"
-    var description string
-    err = db.QueryRow(query, loanType).Scan(&description)
+    query := "SELECT description FROM loans WHERE loan_type = $1"
+	var description string
+
+	err = db.QueryRow(query, loanType).Scan(&description)
     if err != nil {
         http.Error(w, err.Error(), http.StatusNotFound)
         return
@@ -130,9 +158,27 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 		monthlyMortgagePayment = 0
 	}
 
-	dbURL := os.Getenv("JAWSDB_URL")
+		err := godotenv.Load()
+	if err != nil {
+	  log.Fatal("Error loading .env file")
+	}
+	postgresUser := os.Getenv("POSTGRES_USER")
+	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
+	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
 
-    db, err := sql.Open("mysql", dbURL)
+	var (
+		host     = "localhost"
+		port     = 5432
+		user     = postgresUser
+		password = postgresPassword
+		dbName   = postgresDBName
+	)
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+        "password=%s dbname=%s sslmode=disable",
+        host, port, user, password, dbName)
+
+    db, err := sql.Open("postgres", psqlInfo)
     if err != nil {
         log.Fatal(err)
     }
@@ -161,7 +207,7 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 		DateCreated:          	time.Now(),
 	}
 
-	insertQuery := "INSERT INTO MortgageInfo (monthly_mortgage_payment, principal, mortgage_term, annual_taxes, down_payment, interest_rate, annual_insurance, monthly_hoa, email, date_created) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"
+	insertQuery := "INSERT INTO MortgageInfo (monthly_mortgage_payment, principal, mortgage_term, annual_taxes, down_payment, interest_rate, annual_insurance, monthly_hoa, email, date_created) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)"
 	_, err = db.Exec(insertQuery, info.MonthlyMortgagePayment, info.Principal, info.MortgageTerm, info.AnnualTaxes, info.DownPayment, info.InterestRate, info.AnnualInsurance, info.MonthlyHOA, info.Email, info.DateCreated)
 
 	if err != nil {
@@ -194,8 +240,7 @@ func postMonthlyPayment(w http.ResponseWriter, r *http.Request) {
 
 	principalMinusDownPayment := principal - downPayment
 	monthlyPrincipal, _ := division(principalMinusDownPayment, lengthOfMortgageInMonths)
-	taxPercent, _ := division(annualTaxes, 100)
-	yearlyTaxes := multiply(principal, taxPercent)
+	yearlyTaxes := multiply(principal, annualTaxes)/100
 	monthlyTaxes, _ := division(yearlyTaxes, 12)
 	monthlyInsurance, _ := division(annualInsurance, 12)
 	interestRatePercentage, _ := division(interestRate, 100)
@@ -238,23 +283,149 @@ func postMonthlyPayment(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprint(w, response)
 }
+type Loans struct {
+    id    int
+    loan_type  string
+    description string
+}
+
+func createTables(db *sql.DB) error {
+	sqlStmtDropLoans := `DROP TABLE IF EXISTS loans`
+	_, errLoansDrop := db.Exec(sqlStmtDropLoans)
+	if errLoansDrop != nil {
+		return errLoansDrop
+	}
+	fmt.Println("Loans table dropped successfully")
+	sqlStmtAddLoans := `
+		CREATE TABLE IF NOT EXISTS loans (
+			id SERIAL PRIMARY KEY,
+			loan_type TEXT,
+			description TEXT
+		)
+	`
+
+	// Execute the SQL statement
+	_, errLoansAdd := db.Exec(sqlStmtAddLoans)
+	if errLoansAdd != nil {
+		return errLoansAdd
+	}
+	fmt.Println("Loans table created successfully")
+
+	sqlStmtAddInfo := `
+		CREATE TABLE IF NOT EXISTS MortgageInfo (
+			id SERIAL PRIMARY KEY,
+			monthly_mortgage_payment TEXT,
+			principal TEXT,
+			mortgage_term TEXT,
+			annual_taxes TEXT,
+			down_payment TEXT,
+			interest_rate TEXT,
+			annual_insurance TEXT,
+			monthly_hoa TEXT,
+			email TEXT,
+			date_created DATE
+		)
+	`
+
+	// Execute the SQL statement
+	_, errInfo := db.Exec(sqlStmtAddInfo)
+	if errInfo != nil {
+		return errInfo
+	}
+	fmt.Println("Mortgage Info table created successfully")
+	return nil
+}
+
+func seedDb() {
+	err := godotenv.Load()
+	if err != nil {
+	  log.Fatal("Error loading .env file")
+	}
+	postgresUser := os.Getenv("POSTGRES_USER")
+	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
+	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
+
+	var (
+		host     = "localhost"
+		port     = 5432
+		user     = postgresUser
+		password = postgresPassword
+		dbName   = postgresDBName
+	)
+
+	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
+        "password=%s dbname=%s sslmode=disable",
+        host, port, user, password, dbName)
+
+    db, err := sql.Open("postgres", psqlInfo)
+    if err != nil {
+        log.Fatal(err)
+    }
+    defer db.Close()
+
+    // Verify the connection
+    err = db.Ping()
+    if err != nil {
+        log.Fatal(err)
+    }
+    fmt.Println("Successfully connected to the database!")
+	if err := createTables(db); err != nil {
+		log.Fatal("Error creating items table:", err)
+	}
+    // Seed data into the database
+    seedData := []Loans{
+        {id: 1, loan_type: "conventional", description: "A conventional mortgage loan is a type of home financing that isn't government-backed and is offered by private lenders like banks and credit unions. Borrowers typically need a solid credit history and financial stability to qualify, adhering to lender underwriting guidelines. These loans can have either fixed or adjustable interest rates, and they may require private mortgage insurance (PMI) if the down payment is below a certain threshold."},
+        {id: 2, loan_type: "fha", description: "An FHA loan is a government-backed mortgage insured by the Federal Housing Administration. It's known for its lower down payment requirement, often as low as 3.5%, making it an option for those with modest savings. These loans have flexible credit requirements and can have fixed or adjustable interest rates. FHA loans are offered by FHA-approved lenders and aim to help more people become homeowners while providing extra protection for lenders with government insurance."},
+        {id: 3, loan_type: "jumbo", description: "A jumbo loan is a mortgage for higher-priced properties that exceed standard loan limits. It's offered by private lenders and may have different interest rate options. Qualifying for a jumbo loan typically requires meeting stricter credit and income criteria. This option is suitable for financing luxury homes or properties in pricey real estate markets. If you're interested, we can discuss how a jumbo loan could work for your home purchase."},
+        {id: 4, loan_type: "refinance", description: "A refinance loan allows you to replace your existing mortgage with a new one, often to secure a better interest rate or change the loan terms. It's a way to adjust your current home loan to better suit your financial goals and circumstances. Refinancing can potentially reduce your monthly payments or help you access the equity in your home for other purposes, like home improvements or debt consolidation. If you're considering a refinance, we can explore the options available to you and help you make an informed decision."},
+        {id: 5, loan_type: "vaLoan", description: "A VA loan is a special mortgage program for eligible veterans, active-duty service members, and select National Guard and Reserve members, along with qualifying spouses. Backed by the Department of Veterans Affairs (VA), it requires no down payment and offers competitive interest rates. Provided by private lenders, VA loans aim to make home buying easier for military personnel. If you qualify, we can assist you in considering this advantageous option for buying or refinancing your home."},
+        
+    }
+
+    for _, loans := range seedData {
+        _, err := db.Exec("INSERT INTO loans (id, loan_type, description) VALUES ($1, $2, $3)", loans.id, loans.loan_type, loans.description)
+        if err != nil {
+            log.Fatal(err)
+        }
+    }
+
+    fmt.Println("Seed data inserted successfully!")
+}
+
+
+func setupServer() *http.Server {
+    mux := http.NewServeMux()
+    mux.Handle("/", http.FileServer(http.Dir("static")))
+    mux.Handle("/css/", twhandler.New(http.Dir("css"), "/css", twembed.New()))
+
+    mux.HandleFunc("/getLoanDescription", getLoanDescription)
+    mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
+    mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
+
+    return &http.Server{Addr: ":" + getPort(), Handler: mux}
+}
+
+func getPort() string {
+	err := godotenv.Load()
+    if err != nil {
+        log.Fatal("Error loading .env file")
+    }
+    port := os.Getenv("PORT")
+    if port == "" {
+        log.Fatal("$PORT must be set")
+    }
+    return port
+}
+
 
 func main() {
-	fmt.Println("Mortgage Calulator")
+	fmt.Println("Mortgage Calculator")
 	mux := http.NewServeMux()
 	mux.Handle("/", http.FileServer(http.Dir("static")))
 	mux.Handle("/css/", twhandler.New(http.Dir("css"), "/css", twembed.New()))
 
-	port := os.Getenv("PORT")
-		if port == "" {
-    	log.Fatal("$PORT must be set")
-	}
+    seedDb()
 
-	s := &http.Server{Addr: ":" + port, Handler: mux}
-
-	mux.HandleFunc("/getLoanDescription", getLoanDescription)
-	mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
-	mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
-
-	log.Fatal(s.ListenAndServe())
+    server := setupServer()
+    log.Fatal(server.ListenAndServe())
 }

@@ -1,433 +1,436 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script
-      src="https://unpkg.com/htmx.org@1.9.6"
-      integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
-      crossorigin="anonymous"
-    ></script>
-    <link rel="stylesheet" href="/css/input.css" />
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link
-      href="https://fonts.googleapis.com/css?family=Inter"
-      rel="stylesheet"
-    />
-    <title>Mortgage Calculator</title>
-    <style>
-      input::-webkit-outer-spin-button,
-      input::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-      }
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<script
+			src="https://unpkg.com/htmx.org@1.9.6"
+			integrity="sha384-FhXw7b6AlE/jyjlZH5iHa/tTe9EpJ1Y55RjcgPbjeWMskSxZt1v9qkxLJWNJaGni"
+			crossorigin="anonymous"
+		></script>
+		<link rel="stylesheet" href="/css/input.css" />
+		<script src="https://cdn.tailwindcss.com"></script>
+		<link
+			href="https://fonts.googleapis.com/css?family=Inter"
+			rel="stylesheet"
+		/>
+		<title>Mortgage Calculator</title>
+		<style>
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
+			}
 
-      /* Firefox */
-      input[type="number"] {
-        -moz-appearance: textfield;
-      }
-    </style>
-  </head>
-  <body class="bg-slate-400">
-    <section
-      class="mx-auto my-6 w-3/4 h-fit px-8 sm:h-100 sm:my-0 bg-neutral-900 shadow-black shadow-lg rounded-xl z-0"
-    >
-      <h1 class="text-center text-white text-5xl py-4">Mortgage Calculator</h1>
-      <div class="m-auto text-center my-4">
-        <ol class="text-white flex justify-center space-x-8">
-          <li>
-            <button
-              class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
-              hx-get="/getLoanDescription?loanType=conventional"
-              hx-trigger="click"
-              hx-target="#loan-description"
-            >
-              Conventional
-            </button>
-          </li>
-          <li>
-            <button
-              class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
-              hx-get="/getLoanDescription?loanType=fha"
-              hx-trigger="click"
-              hx-target="#loan-description"
-            >
-              FHA
-            </button>
-          </li>
-          <li>
-            <button
-              class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
-              hx-get="/getLoanDescription?loanType=jumbo"
-              hx-trigger="click"
-              hx-target="#loan-description"
-            >
-              Jumbo
-            </button>
-          </li>
-          <li>
-            <button
-              class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
-              hx-get="/getLoanDescription?loanType=refinance"
-              hx-trigger="click"
-              hx-target="#loan-description"
-            >
-              Refinance
-            </button>
-          </li>
-          <li>
-            <button
-              class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
-              hx-get="/getLoanDescription?loanType=vaLoan"
-              hx-trigger="click"
-              hx-target="#loan-description"
-            >
-              VA Loan
-            </button>
-          </li>
-        </ol>
-        <p
-          id="loan-description"
-          class="m-auto w-2/3 text-white my-2 h-24 place-items-center"
-          hx-get="/getLoanDescription?loanType=conventional"
-          hx-swap="innerHTML"
-          hx-trigger="load"
-        ></p>
-      </div>
+			/* Firefox */
+			input[type="number"] {
+				-moz-appearance: textfield;
+			}
+		</style>
+	</head>
+	<body class="bg-slate-400">
+		<section
+			class="mx-auto my-6 w-3/4 h-fit px-8 sm:h-100 bg-neutral-900 shadow-black shadow-lg rounded-xl z-0"
+		>
+			<h1 class="text-center text-white text-5xl py-4">Mortgage Calculator</h1>
+			<div class="m-auto text-center my-4">
+				<ol class="text-white flex justify-center space-x-8">
+					<li>
+						<button
+							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							hx-get="/getLoanDescription?loanType=conventional"
+							hx-trigger="click"
+							hx-target="#loan-description"
+						>
+							Conventional
+						</button>
+					</li>
+					<li>
+						<button
+							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							hx-get="/getLoanDescription?loanType=fha"
+							hx-trigger="click"
+							hx-target="#loan-description"
+						>
+							FHA
+						</button>
+					</li>
+					<li>
+						<button
+							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							hx-get="/getLoanDescription?loanType=jumbo"
+							hx-trigger="click"
+							hx-target="#loan-description"
+						>
+							Jumbo
+						</button>
+					</li>
+					<li>
+						<button
+							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							hx-get="/getLoanDescription?loanType=refinance"
+							hx-trigger="click"
+							hx-target="#loan-description"
+						>
+							Refinance
+						</button>
+					</li>
+					<li>
+						<button
+							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							hx-get="/getLoanDescription?loanType=vaLoan"
+							hx-trigger="click"
+							hx-target="#loan-description"
+						>
+							VA Loan
+						</button>
+					</li>
+				</ol>
+				<p
+					id="loan-description"
+					class="m-auto w-2/3 text-white my-2 h-24 place-items-center"
+					hx-get="/getLoanDescription?loanType=conventional"
+					hx-swap="innerHTML"
+					hx-trigger="load"
+				></p>
+			</div>
 
-      <div class="m-auto grid grid-cols-3 gap-8">
-        <div class="col-span-2 flex">
-          <form class="col-span-2 flex-grow">
-            <div class="col-span-2 px-12 border-r-2 my-8 sm:px-6">
-              <div class="grid grid-cols-2 gap-8 my-6 pt-4">
-                <div class="flex flex-col">
-                  <label class="text-white mb-1" for="purchasePrice"
-                    >Purchase Price</label
-                  >
-                  <div class="relative inline-block">
-                    <span
-                      class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
-                      >$</span
-                    >
-                    <input
-                      hx-post="/postMonthlyPayment"
-                      hx-trigger="keyup changed delay:0.25s"
-                      hx-target="#monthlyPayment"
-                      class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
-                      name="purchasePrice"
-                      id="purchasePrice"
-                      type="number"
-                      value="0"
-                      onkeypress="return /[0-9]/i.test(event.key)"
-                    />
-                  </div>
-                </div>
-                <div class="flex flex-col">
-                  <label class="text-white mb-1" for="mortgageTerm"
-                    >Mortgage Term</label
-                  >
-                  <select
-                    hx-post="/postMonthlyPayment"
-                    hx-target="#monthlyPayment"
-                    class="w-full block py-2.5 px-0 text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
-                    name="mortgageTerm"
-                    id="mortgageTerm"
-                  >
-                    <option
-                      class="bg-neutral-900 text-white border-white"
-                      value="360"
-                    >
-                      30 years
-                    </option>
-                    <option
-                      class="bg-neutral-900 text-white border-white"
-                      value="180"
-                    >
-                      15 years
-                    </option>
-                  </select>
-                </div>
-              </div>
-              <div class="grid grid-cols-2 gap-8 my-6">
-                <!-- Down Payment -->
-                <div class="flex flex-col">
-                  <div class="flex justify-between items-center">
-                    <label class="text-white mb-1" for="downPayment"
-                      >Down Payment</label
-                    >
-                    <div class="relative inline-block w-fit">
-                      <span
-                        class="absolute right-24 translate-y-2/4 text-white text-xl -my-2.5"
-                        >$</span
-                      >
-                      <input
-                        id="downPaymentNumInput"
-                        class="float-right w-1/2 block border-white py-0.5 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white text-right my-1"
-                        type="number"
-                        min="0"
-                        value="0"
-                        onkeypress="return /[0-9]/i.test(event.key)"
-                      />
-                    </div>
-                  </div>
+			<div class="mx-auto grid grid-cols-3 gap-8 py-6">
+				<div class="col-span-2 flex">
+					<form class="col-span-2 flex-grow">
+						<div class="col-span-2 px-12 border-r-2 my-8 sm:px-6">
+							<div class="grid grid-cols-2 gap-8 my-6 pt-4">
+								<div class="flex flex-col">
+									<label class="text-white mb-1" for="purchasePrice"
+										>Purchase Price</label
+									>
+									<div class="relative inline-block">
+										<span
+											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
+											>$</span
+										>
+										<input
+											hx-post="/postMonthlyPayment"
+											hx-trigger="keyup changed delay:0.25s"
+											hx-target="#monthlyPayment"
+											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+											name="purchasePrice"
+											id="purchasePrice"
+											type="number"
+											value="0"
+											onkeypress="return /[0-9]/i.test(event.key)"
+										/>
+									</div>
+								</div>
+								<div class="flex flex-col">
+									<label class="text-white mb-1" for="mortgageTerm"
+										>Mortgage Term</label
+									>
+									<select
+										hx-post="/postMonthlyPayment"
+										hx-target="#monthlyPayment"
+										class="w-full block py-2.5 px-0 text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
+										name="mortgageTerm"
+										id="mortgageTerm"
+									>
+										<option
+											class="bg-neutral-900 text-white border-white"
+											value="360"
+										>
+											30 years
+										</option>
+										<option
+											class="bg-neutral-900 text-white border-white"
+											value="180"
+										>
+											15 years
+										</option>
+									</select>
+								</div>
+							</div>
+							<div class="grid grid-cols-2 gap-8 my-6">
+								<!-- Down Payment -->
+								<div class="flex flex-col">
+									<div class="flex justify-between items-center">
+										<label class="text-white mb-1" for="downPayment"
+											>Down Payment</label
+										>
+										<div class="relative inline-block w-fit">
+											<span
+												class="absolute right-24 translate-y-2/4 text-white text-xl -my-2.5"
+												>$</span
+											>
+											<input
+												id="downPaymentNumInput"
+												class="float-right w-1/2 block border-white py-0.5 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white text-right my-1"
+												type="number"
+												min="0"
+												value="0"
+												onkeypress="return /[0-9]/i.test(event.key)"
+											/>
+										</div>
+									</div>
 
-                  <input
-                    hx-post="/postMonthlyPayment"
-                    hx-target="#monthlyPayment"
-                    class="w-full block bg-transparent text-white border-b-2 border-white accent-violet-600"
-                    type="range"
-                    name="downPayment"
-                    id="downPayment"
-                    min="0"
-                    value="0"
-                  />
-                  <span
-                    class="text-white mb-0.5"
-                    id="downPaymentPercent"
-                  ></span>
-                </div>
-                <!-- Annual Taxes -->
-                <div class="flex flex-col">
-                  <div class="flex justify-between items-center">
-                    <label class="text-white mb-1" for="annualTaxes"
-                      >Annual Taxes</label
-                    >
-                    <div class="relative inline-block w-fit">
-                      <span
-                        class="absolute right-24 translate-y-2/4 text-white text-xl -my-2.5"
-                        >$</span
-                      >
-                      <input
-                        id="annualTaxesNumInputReadOnly"
-                        class="float-right w-1/2 block py-0.5 border-white text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white text-right my-1"
-                        type="number"
-                        readonly
-                      />
-                    </div>
-                  </div>
+									<input
+										hx-post="/postMonthlyPayment"
+										hx-target="#monthlyPayment"
+										class="w-full block bg-transparent text-white border-b-2 border-white accent-violet-600"
+										type="range"
+										name="downPayment"
+										id="downPayment"
+										min="0"
+										value="0"
+									/>
+									<span
+										class="text-white mb-0.5"
+										id="downPaymentPercent"
+									></span>
+								</div>
+								<!-- Annual Taxes -->
+								<div class="flex flex-col">
+									<div class="flex justify-between items-center">
+										<label class="text-white mb-1" for="annualTaxes"
+											>Annual Taxes</label
+										>
+										<div class="relative inline-block w-fit">
+											<span
+												class="absolute right-24 translate-y-2/4 text-white text-xl -my-2.5"
+												>$</span
+											>
+											<input
+												id="annualTaxesNumInputReadOnly"
+												class="float-right w-1/2 block py-0.5 border-white text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white text-right my-1"
+												type="number"
+												readonly
+											/>
+										</div>
+									</div>
 
-                  <input
-                    hx-post="/postMonthlyPayment"
-                    hx-target="#monthlyPayment"
-                    class="w-full block bg-transparent text-white border-b-2 border-white accent-violet-600"
-                    type="range"
-                    name="annualTaxes"
-                    id="annualTaxes"
-                    min="0.0"
-                    max="100.0"
-                    step="0.5"
-                    value="2.5"
-                  />
-                  <span
-                    class="text-white mb-0.5"
-                    id="annualTaxesPercent"
-                  ></span>
-                </div>
-              </div>
-              <!-- Interest Rate -->
-              <div class="my-2">
-                <label class="text-white mb-1" for="interestRate"
-                  >Interest Rate (%)</label
-                >
-                <input
-                  hx-post="/postMonthlyPayment"
-                  hx-target="#monthlyPayment"
-                  class="w-full block accent-violet-600"
-                  type="range"
-                  name="interestRate"
-                  id="interestRate"
-                  min="0.0"
-                  max="12.0"
-                  step="0.125"
-                />
-                <span class="text-white mb-0.5" id="interestRatePercent"></span>
-              </div>
+									<input
+										hx-post="/postMonthlyPayment"
+										hx-target="#monthlyPayment"
+										class="w-full block bg-transparent text-white border-b-2 border-white accent-violet-600"
+										type="range"
+										name="annualTaxes"
+										id="annualTaxes"
+										min="0.000"
+										step="0.0125"
+										start="0.550"
+										max="2.00"
+									/>
+									<span
+										class="text-white mb-0.5"
+										id="annualTaxesPercent"
+									></span>
+								</div>
+							</div>
+							<!-- Interest Rate -->
+							<div class="my-2">
+								<label class="text-white mb-1" for="interestRate"
+									>Interest Rate (%)</label
+								>
+								<input
+									hx-post="/postMonthlyPayment"
+									hx-target="#monthlyPayment"
+									class="w-full block accent-violet-600"
+									type="range"
+									name="interestRate"
+									id="interestRate"
+									min="0.0"
+									max="12.0"
+									step="0.125"
+								/>
+								<span class="text-white mb-0.5" id="interestRatePercent"></span>
+							</div>
 
-              <div class="grid grid-cols-2 gap-8 my-6">
-                <div class="flex flex-col">
-                  <label class="text-white mb-1" for="annualInsurance"
-                    >Annual Insurance</label
-                  >
-                  <div class="relative inline-block">
-                    <span
-                      class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
-                      >$</span
-                    >
-                    <input
-                      hx-post="/postMonthlyPayment"
-                      hx-target="#monthlyPayment"
-                      hx-trigger="keyup changed delay:0.25s"
-                      class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
-                      name="annualInsurance"
-                      id="annualInsurance"
-                      type="number"
-                      min="0"
-                      value="0"
-                      onkeypress="return /[0-9]/i.test(event.key)"
-                    />
-                  </div>
-                </div>
-                <div class="flex flex-col">
-                  <label class="text-white mb-1" for="monthlyHoa"
-                    >Monthly HOA</label
-                  >
-                  <div class="relative inline-block">
-                    <span
-                      class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
-                      >$</span
-                    >
-                    <input
-                      hx-post="/postMonthlyPayment"
-                      hx-target="#monthlyPayment"
-                      hx-trigger="keyup changed delay:0.25s"
-                      class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
-                      name="monthlyHoa"
-                      id="monthlyHoa"
-                      type="number"
-                      value="0"
-                      onkeypress="return /[0-9]/i.test(event.key)"
-                    />
-                  </div>
-                </div>
-              </div>
-              <p class="text-center text-white" for="email">
-                If you would like your results emailed to you, enter your email
-                below for future reference
-              </p>
-              <div class="flex items-center my-4">
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  class="w-5/6 px-3 py-0.5 rounded-l-md border-gray-300 text-sm h-8"
-                  placeholder="Email Address"
-                />
-                <button
-                  hx-post="/postSendEmailAndSaveInDb"
-                  hx-target="#emailAttemptResponse"
-                  id="sendButton"
-                  class="bg-violet-600 w-1/6 px-4 py-0.5 rounded-r-md text-white text-small hover:shadow-md transition-shadow ease-in duration-200 h-8"
-                  type="submit"
-                  disabled
-                >
-                  Send Email
-                </button>
-              </div>
-              <div id="emailAttemptResponse"></div>
-            </div>
-          </form>
-        </div>
+							<div class="grid grid-cols-2 gap-8 my-6">
+								<div class="flex flex-col">
+									<label class="text-white mb-1" for="annualInsurance"
+										>Annual Insurance</label
+									>
+									<div class="relative inline-block">
+										<span
+											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
+											>$</span
+										>
+										<input
+											hx-post="/postMonthlyPayment"
+											hx-target="#monthlyPayment"
+											hx-trigger="keyup changed delay:0.25s"
+											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+											name="annualInsurance"
+											id="annualInsurance"
+											type="number"
+											min="0"
+											value="0"
+											onkeypress="return /[0-9]/i.test(event.key)"
+										/>
+									</div>
+								</div>
+								<div class="flex flex-col">
+									<label class="text-white mb-1" for="monthlyHoa"
+										>Monthly HOA</label
+									>
+									<div class="relative inline-block">
+										<span
+											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
+											>$</span
+										>
+										<input
+											hx-post="/postMonthlyPayment"
+											hx-target="#monthlyPayment"
+											hx-trigger="keyup changed delay:0.25s"
+											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+											name="monthlyHoa"
+											id="monthlyHoa"
+											type="number"
+											value="0"
+											onkeypress="return /[0-9]/i.test(event.key)"
+										/>
+									</div>
+								</div>
+							</div>
+							<p class="text-center text-white" for="email">
+								If you would like your results emailed to you, enter your email
+								below for future reference
+							</p>
+							<div class="flex items-center my-4">
+								<input
+									type="email"
+									name="email"
+									id="email"
+									class="w-5/6 px-3 py-0.5 rounded-l-md border-gray-300 text-sm h-8"
+									placeholder="Email Address"
+								/>
+								<button
+									hx-post="/postSendEmailAndSaveInDb"
+									hx-target="#emailAttemptResponse"
+									id="sendButton"
+									class="bg-violet-600 w-1/6 px-4 py-0.5 rounded-r-md text-white text-small hover:shadow-md transition-shadow ease-in duration-200 h-8"
+									type="submit"
+									disabled
+								>
+									Send Email
+								</button>
+							</div>
+							<div id="emailAttemptResponse"></div>
+						</div>
+					</form>
+				</div>
 
-        <div
-          class="col-span-1 text-white flex flex-col px-4 my-6 sm:px-2 sm:my-3"
-          id="monthlyPayment"
-        >
-          <h3 class="text-white text-6xl text-center m-auto mb-8">$0.00</h3>
-          <div class="flex-grow">
-            <div class="grid grid-cols-2 gap-y-8">
-              <p class="text-xl">Principal & Interest</p>
-              <p class="text-right text-xl">$0.00</p>
-              <p class="text-xl">Monthly Taxes</p>
-              <p class="text-right text-xl">$0.00</p>
-              <p class="text-xl">Monthly Insurance</p>
-              <p class="text-right text-xl">$0.00</p>
-              <p class="text-xl">HOA</p>
-              <p class="text-right text-xl">$0.00</p>
-              <p
-                class="text-center text-sm italic col-span-2 sm:text-xs sm:leading-relaxed"
-              >
-                Please note that the mortgage calculator on our website provides
-                estimates for general informational purposes only. For
-                personalized guidance and accurate loan information, we
-                recommend reaching out to our expert loan officers who can
-                assist you with your specific mortgage needs.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  </body>
-  <script>
-    const principalInput = document.getElementById("purchasePrice");
-    const downPaymentInput = document.getElementById("downPayment");
-    const downPaymentSpan = document.getElementById("downPaymentPercent");
-    const downPaymentNumInput = document.getElementById("downPaymentNumInput");
-    const annualTaxesInput = document.getElementById("annualTaxes");
-    const annualTaxesNumInputReadOnly = document.getElementById(
-      "annualTaxesNumInputReadOnly"
-    );
-    const annualInsuranceInput = document.getElementById("annualInsurance");
-    const monthlyHoaInput = document.getElementById("monthlyHoa");
-    const interestRateInput = document.getElementById("interestRate");
-    const interestRatePercentSpan = document.getElementById(
-      "interestRatePercent"
-    );
-    const annualTaxesPercentSpan =
-      document.getElementById("annualTaxesPercent");
+				<div
+					class="col-span-1 text-white flex flex-col px-4 my-6 sm:px-2 sm:my-3"
+					id="monthlyPayment"
+				>
+					<h3 class="text-white text-6xl text-center m-auto mb-8">$0.00</h3>
+					<div class="flex-grow">
+						<div class="grid grid-cols-2 gap-y-8">
+							<p class="text-xl">Principal & Interest</p>
+							<p class="text-right text-xl">$0.00</p>
+							<p class="text-xl">Monthly Taxes</p>
+							<p class="text-right text-xl">$0.00</p>
+							<p class="text-xl">Monthly Insurance</p>
+							<p class="text-right text-xl">$0.00</p>
+							<p class="text-xl">HOA</p>
+							<p class="text-right text-xl">$0.00</p>
+							<p
+								class="text-center text-sm italic col-span-2 sm:text-xs sm:leading-relaxed"
+							>
+								Please note that the mortgage calculator on our website provides
+								estimates for general informational purposes only. For
+								personalized guidance and accurate loan information, we
+								recommend reaching out to our expert loan officers who can
+								assist you with your specific mortgage needs.
+							</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</body>
+	<script>
+		const principalInput = document.getElementById("purchasePrice");
+		const downPaymentInput = document.getElementById("downPayment");
+		const downPaymentSpan = document.getElementById("downPaymentPercent");
+		const downPaymentNumInput = document.getElementById("downPaymentNumInput");
+		const annualTaxesInput = document.getElementById("annualTaxes");
+		const annualTaxesNumInputReadOnly = document.getElementById(
+			"annualTaxesNumInputReadOnly"
+		);
+		const annualInsuranceInput = document.getElementById("annualInsurance");
+		const monthlyHoaInput = document.getElementById("monthlyHoa");
+		const interestRateInput = document.getElementById("interestRate");
+		const interestRatePercentSpan = document.getElementById(
+			"interestRatePercent"
+		);
+		const annualTaxesPercentSpan =
+			document.getElementById("annualTaxesPercent");
 
-    window.addEventListener("load", function () {
-      principalInput.value = 0;
-      downPaymentInput.value = 0;
-      downPaymentNumInput.value = 0;
-      annualInsuranceInput.value = 0;
-      annualTaxesNumInputReadOnly.value = 0;
-      monthlyHoaInput.value = 0;
-      interestRatePercentSpan.innerHTML = `${interestRateInput.value}%`;
-      annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
-      downPaymentInput.disabled = true;
-    });
+		window.addEventListener("load", function () {
+			principalInput.value = 0;
+			downPaymentInput.value = 0;
+			downPaymentNumInput.value = 0;
+			annualInsuranceInput.value = 0;
+			annualTaxesNumInputReadOnly.value = 0;
+			monthlyHoaInput.value = 0;
+			interestRatePercentSpan.innerHTML = `${interestRateInput.value}%`;
+			annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
+			downPaymentInput.disabled = true;
+		});
 
-    document.getElementById("email").addEventListener("input", function () {
-      const emailInput = this.value.trim();
-      const sendButton = document.getElementById("sendButton");
-      const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
+		document.getElementById("email").addEventListener("input", function () {
+			const emailInput = this.value.trim();
+			const sendButton = document.getElementById("sendButton");
+			const emailPattern = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
 
-      if (emailInput.match(emailPattern)) {
-        // Enable the button if the email is valid
-        sendButton.disabled = false;
-      } else {
-        // Disable the button if the email is not valid
-        sendButton.disabled = true;
-      }
-    });
+			if (emailInput.match(emailPattern)) {
+				// Enable the button if the email is valid
+				sendButton.disabled = false;
+			} else {
+				// Disable the button if the email is not valid
+				sendButton.disabled = true;
+			}
+		});
 
-    principalInput.addEventListener("input", function () {
-      let principal = parseInt(principalInput.value);
-      let annualTaxesPercent = parseInt(annualTaxesInput.value) / 100;
-      annualTaxesNumInputReadOnly.value = principal * annualTaxesPercent;
-      downPaymentInput.disabled = false;
-      downPaymentInput.max = principal;
-      if (downPaymentInput.value > principal) {
-        downPaymentInput.value = principal;
-      }
-    });
+		principalInput.addEventListener("input", function () {
+			let principal = parseInt(principalInput.value);
+			let annualTaxesPercent = parseInt(annualTaxesInput.value) / 100;
+			annualTaxesNumInputReadOnly.value = principal * annualTaxesPercent;
+			downPaymentInput.disabled = false;
+			downPaymentInput.max = principal;
+			if (downPaymentInput.value > principal) {
+				downPaymentInput.value = principal;
+			}
+		});
 
-    interestRateInput.addEventListener("change", function () {
-      interestRatePercentSpan.innerHTML = `${interestRateInput.value}%`;
-    });
+		interestRateInput.addEventListener("change", function () {
+			interestRatePercentSpan.innerHTML = `${interestRateInput.value}%`;
+		});
 
-    annualTaxesInput.addEventListener("change", function () {
-      let principal = parseInt(principalInput.value);
-      let annualTaxesPercent = parseInt(annualTaxesInput.value) / 100;
-      annualTaxesNumInputReadOnly.value = principal * annualTaxesPercent;
-      annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
-    });
+		annualTaxesInput.addEventListener("change", function () {
+			let principal = parseInt(principalInput.value);
+			let annualTaxesPercent = parseFloat(annualTaxesInput.value);
+			console.log(annualTaxesPercent);
+			annualTaxesNumInputReadOnly.value =
+				(principal * annualTaxesPercent) / 100;
+			console.log(principal * annualTaxesPercent, annualTaxesPercent);
+			annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
+		});
 
-    downPaymentInput.addEventListener("change", function () {
-      let principal = parseInt(principalInput.value);
-      let downPayment = parseInt(downPaymentInput.value);
-      let percentOfPrincipal = (downPayment / principal) * 100;
-      downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
-      downPaymentNumInput.value = downPayment;
-    });
+		downPaymentInput.addEventListener("change", function () {
+			let principal = parseInt(principalInput.value);
+			let downPayment = parseInt(downPaymentInput.value);
+			let percentOfPrincipal = (downPayment / principal) * 100;
+			downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
+			downPaymentNumInput.value = downPayment;
+		});
 
-    downPaymentNumInput.addEventListener("input", function () {
-      let principal = parseInt(principalInput.value);
-      let downPayment = parseInt(downPaymentNumInput.value);
-      let percentOfPrincipal = (downPayment / principal) * 100;
-      downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
-      downPaymentInput.value = downPaymentNumInput.value;
-    });
-  </script>
+		downPaymentNumInput.addEventListener("input", function () {
+			let principal = parseInt(principalInput.value);
+			let downPayment = parseInt(downPaymentNumInput.value);
+			let percentOfPrincipal = (downPayment / principal) * 100;
+			downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
+			downPaymentInput.value = downPaymentNumInput.value;
+		});
+	</script>
 </html>
