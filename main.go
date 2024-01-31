@@ -47,10 +47,6 @@ func multiply(n, d float64) float64 {
 }
 
 func sendEmail(email string, i SavedMortgageInfo) (string, error) {
-    err := godotenv.Load()
-    if err != nil {
-        log.Fatal("Error loading .env file")
-    }
 
     courierApiKey := os.Getenv("COURIER_API_KEY")
     courierTemplateId := os.Getenv("COURIER_TEMPLATE_ID")
@@ -412,14 +408,10 @@ func setupServer() *http.Server {
     mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
     mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
 
-    return &http.Server{Addr: ":" + getPort(), Handler: mux}
+    return &http.Server{Addr: "127.0.0.1:" + getPort(), Handler: mux}
 }
 
 func getPort() string {
-	err := godotenv.Load()
-    if err != nil {
-        log.Fatal("Error loading .env file")
-    }
     port := os.Getenv("PORT")
     if port == "" {
         log.Fatal("$PORT must be set")
