@@ -23,33 +23,10 @@ var db *sql.DB
 
 func initDB() *sql.DB {
 	err := godotenv.Load()
-	postgresHost := os.Getenv("POSTGRES_HOST")
-	postgresPort := os.Getenv("POSTGRES_PORT")
-	postgresUser := os.Getenv("POSTGRES_USER")
-	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
-	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
-
-	port, err := strconv.Atoi(postgresPort)
-    if err != nil {
-        fmt.Println("Error converting port to integer:", err)
-        
-    }
-
-	var (
-		host     = postgresHost
-		portInt  = port
-		user     = postgresUser
-		password = postgresPassword
-		dbName   = postgresDBName
-	)
-
 	
+	postgresConnectionString := os.Getenv("DATABASE_URL")
 
-	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
-        "password=%s dbname=%s sslmode=disable",
-        host, portInt, user, password, dbName)
-
-    db, err := sql.Open("postgres", psqlInfo)
+    db, err := sql.Open("postgres", postgresConnectionString)
     if err != nil {
         log.Fatal(err)
     }
