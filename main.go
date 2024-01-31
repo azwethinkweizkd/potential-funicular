@@ -335,7 +335,7 @@ func setupServer() *http.Server {
     mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
     mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
 
-    return &http.Server{Addr: "127.0.0.1:" + getPort(), Handler: mux}
+    return &http.Server{Addr: ":" + getPort(), Handler: mux}
 }
 
 func getPort() string {
