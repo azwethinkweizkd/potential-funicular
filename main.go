@@ -341,21 +341,31 @@ func seedDb() {
 	if err != nil {
 	  log.Fatal("Error loading .env file")
 	}
+	postgresHost := os.Getenv("POSTGRES_HOST")
+	postgresPort := os.Getenv("POSTGRES_PORT")
 	postgresUser := os.Getenv("POSTGRES_USER")
 	postgresPassword := os.Getenv("POSTGRES_PASSWORD")
 	postgresDBName := os.Getenv("POSTGRES_DB_NAME")
 
+	port, err := strconv.Atoi(postgresPort)
+    if err != nil {
+        fmt.Println("Error converting port to integer:", err)
+        return
+    }
+
 	var (
-		host     = "localhost"
-		port     = 5432
+		host     = postgresHost
+		portInt  = port
 		user     = postgresUser
 		password = postgresPassword
 		dbName   = postgresDBName
 	)
 
+	
+
 	psqlInfo := fmt.Sprintf("host=%s port=%d user=%s "+
         "password=%s dbname=%s sslmode=disable",
-        host, port, user, password, dbName)
+        host, portInt, user, password, dbName)
 
     db, err := sql.Open("postgres", psqlInfo)
     if err != nil {
