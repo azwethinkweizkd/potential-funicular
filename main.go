@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/gotailwindcss/tailwind/twembed"
@@ -188,6 +189,24 @@ func postSendEmailAndSaveInDb(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
+func formatNumberWithCommas(num float64) string {
+    formatted := strconv.FormatFloat(num, 'f', 2, 64)
+    parts := strings.Split(formatted, ".")
+    integerPart := parts[0]
+    var formattedWithCommas string
+    for i := len(integerPart); i > 0; i -= 3 {
+        if i-3 > 0 {
+            formattedWithCommas = "," + integerPart[i-3:i] + formattedWithCommas
+        } else {
+            formattedWithCommas = integerPart[0:i] + formattedWithCommas
+        }
+    }
+    if len(parts) > 1 {
+        formattedWithCommas += "." + parts[1]
+    }
+    return formattedWithCommas
+}
+
 func postMonthlyPayment(w http.ResponseWriter, r *http.Request) {
 	principal, _ := strconv.ParseFloat(r.PostFormValue("purchasePrice"), 64) 
 	lengthOfMortgageInMonths, _ := strconv.ParseFloat(r.PostFormValue("mortgageTerm"), 64) 
@@ -220,25 +239,31 @@ func postMonthlyPayment(w http.ResponseWriter, r *http.Request) {
 		monthlyMortgagePayment = 0
 	}
 
+	formattedMonthlyMortgagePayment := formatNumberWithCommas(monthlyMortgagePayment)
+    formattedMonthlyPrincipalPlusInterest := formatNumberWithCommas(monthlyPrincipalPlusInterest)
+    formattedMonthlyTaxes := formatNumberWithCommas(monthlyTaxes)
+    formattedMonthlyInsurance := formatNumberWithCommas(monthlyInsurance)
+    formattedMonthlyHoa := formatNumberWithCommas(monthlyHoa)
+
 	response := fmt.Sprintf(`
-			<h3 class="text-white text-6xl text-center m-auto mb-8" >
-				$%.2f
-			</h3>
-			<div class="flex-grow">
-				<div class="grid grid-cols-2 gap-y-8">
-					<p class="text-xl">Principal & Interest</p>
-					<p class="text-right text-xl">$%.2f</p>
-					<p class="text-xl">Monthly Taxes</p>
-					<p class="text-right text-xl">$%.2f</p>
-					<p class="text-xl">Monthly Insurance</p>
-					<p class="text-right text-xl">$%.2f</p>
-					<p class="text-xl">HOA</p>
-					<p class="text-right text-xl">$%.2f</p>
-					<p class="text-center text-sm italic col-span-2">
-					Please note that the mortgage calculator on our website provides estimates for general informational purposes only. For personalized guidance and accurate loan information, we recommend reaching out to our expert loan officers who can assist you with your specific mortgage needs.
-				  </p>
-				</div>
-			</div>`, monthlyMortgagePayment, monthlyPrincipalPlusInterest, monthlyTaxes, monthlyInsurance, monthlyHoa)
+            <h3 class="text-white text-6xl text-center m-auto mb-8" >
+                $%s
+            </h3>
+            <div class="flex-grow">
+                <div class="grid grid-cols-2 gap-y-8">
+                    <p class="text-xl">Principal & Interest</p>
+                    <p class="text-right text-xl">$%s</p>
+                    <p class="text-xl">Monthly Taxes</p>
+                    <p class="text-right text-xl">$%s</p>
+                    <p class="text-xl">Monthly Insurance</p>
+                    <p class="text-right text-xl">$%s</p>
+                    <p class="text-xl">HOA</p>
+                    <p class="text-right text-xl">$%s</p>
+                    <p class="text-center text-sm italic col-span-2">
+                    Please note that the mortgage calculator on our website provides estimates for general informational purposes only. For personalized guidance and accurate loan information, we recommend reaching out to our expert loan officers who can assist you with your specific mortgage needs.
+                  </p>
+                </div>
+            </div>`, formattedMonthlyMortgagePayment, formattedMonthlyPrincipalPlusInterest, formattedMonthlyTaxes, formattedMonthlyInsurance, formattedMonthlyHoa)
 
 	fmt.Fprint(w, response)
 }
@@ -334,8 +359,14 @@ func setupServer() *http.Server {
     mux.HandleFunc("/getLoanDescription", getLoanDescription)
     mux.HandleFunc("/postMonthlyPayment", postMonthlyPayment)
     mux.HandleFunc("/postSendEmailAndSaveInDb", postSendEmailAndSaveInDb)
-
-    return &http.Server{Addr: ":" + getPort(), Handler: mux}
+	_ = godotenv.Load()
+	environment := os.Getenv("ENVIRONMENT")
+	if (environment == "development") {
+		return &http.Server{Addr: "127.0.0.1:" + getPort(), Handler: mux}
+	} else {
+		return &http.Server{Addr: ":" + getPort(), Handler: mux}
+	}
+    
 }
 
 func getPort() string {

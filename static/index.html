@@ -116,9 +116,12 @@
 											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
 											name="purchasePrice"
 											id="purchasePrice"
-											type="number"
-											value="0"
-											onkeypress="return /[0-9]/i.test(event.key)"
+											type="text"
+											placeholder="0"
+											max="999999999"
+											step="1"
+											maxlength="9"
+											pattern="[0-9]{9}"
 										/>
 									</div>
 								</div>
@@ -366,6 +369,17 @@
 		const annualTaxesPercentSpan =
 			document.getElementById("annualTaxesPercent");
 
+		function formatNumberInput(input) {
+			// Remove non-numeric characters and commas
+			let formattedValue = input.value.replace(/[^\d]/g, "");
+
+			// Add commas for thousands separator
+			formattedValue = formattedValue.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+			// Set the formatted value back to the input
+			input.value = formattedValue;
+		}
+
 		window.addEventListener("load", function () {
 			principalInput.value = 0;
 			downPaymentInput.value = 0;
@@ -395,7 +409,10 @@
 		principalInput.addEventListener("input", function () {
 			let principal = parseInt(principalInput.value);
 			let annualTaxesPercent = parseInt(annualTaxesInput.value) / 100;
-			annualTaxesNumInputReadOnly.value = principal * annualTaxesPercent;
+			annualTaxesNumInputReadOnly.value = (
+				principal * annualTaxesPercent
+			).toFixed(2);
+
 			downPaymentInput.disabled = false;
 			downPaymentInput.max = principal;
 			if (downPaymentInput.value > principal) {
@@ -409,11 +426,12 @@
 
 		annualTaxesInput.addEventListener("change", function () {
 			let principal = parseInt(principalInput.value);
-			let annualTaxesPercent = parseFloat(annualTaxesInput.value);
-			console.log(annualTaxesPercent);
-			annualTaxesNumInputReadOnly.value =
-				(principal * annualTaxesPercent) / 100;
-			console.log(principal * annualTaxesPercent, annualTaxesPercent);
+			let annualTaxesPercent = parseFloat(annualTaxesInput.value) / 100;
+
+			annualTaxesNumInputReadOnly.value = (
+				principal * annualTaxesPercent
+			).toFixed(2);
+
 			annualTaxesPercentSpan.innerHTML = `${annualTaxesInput.value}%`;
 		});
 
@@ -429,7 +447,7 @@
 			let principal = parseInt(principalInput.value);
 			let downPayment = parseInt(downPaymentNumInput.value);
 			let percentOfPrincipal = (downPayment / principal) * 100;
-			downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(0)}%`;
+			downPaymentSpan.innerHTML = `${percentOfPrincipal.toFixed(2)}%`;
 			downPaymentInput.value = downPaymentNumInput.value;
 		});
 	</script>
