@@ -107,21 +107,23 @@
 						<div
 							class="col-span-2 px-2 lg:border-r-2 xl:border-r-2 2xl:border-r-2 sm:px-1 md:px-2 lg:px-4 xl:px-8 2xl:px-12"
 						>
-							<div class="grid grid-cols-1 gap-8 my-6 pt-4 md:grid-cols-2">
+							<div
+								class="grid grid-cols-1 gap-8 my-8 pt-4 md:grid-cols-2 border-t-2 border-t-white md:border-t-0"
+							>
 								<div class="flex flex-col">
 									<label class="text-white mb-1 2xl:text-xl" for="purchasePrice"
 										>Purchase Price</label
 									>
 									<div class="relative inline-block">
 										<span
-											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
+											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2 xl:text-2xl"
 											>$</span
 										>
 										<input
 											hx-post="/postMonthlyPayment"
 											hx-trigger="keyup changed delay:0.25s"
 											hx-target="#monthlyPayment"
-											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6 xl:text-xl"
 											name="purchasePrice"
 											id="purchasePrice"
 											type="text"
@@ -140,7 +142,7 @@
 									<select
 										hx-post="/postMonthlyPayment"
 										hx-target="#monthlyPayment"
-										class="w-full block py-2.5 px-0 text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer"
+										class="w-full block py-2.5 px-0 text-white bg-transparent border-0 border-b-2 border-white appearance-none focus:outline-none focus:ring-0 focus:border-white peer xl:text-xl"
 										name="mortgageTerm"
 										id="mortgageTerm"
 									>
@@ -168,7 +170,7 @@
 										>
 										<div class="relative inline-block w-fit">
 											<span
-												class="absolute right-24 translate-y-2/4 text-white text-xl -my-2.5"
+												class="absolute right-16 sm:right-24 lg:right-16 xl:right-24 translate-y-2/4 text-white text-xl -my-2.5"
 												>$</span
 											>
 											<input
@@ -193,7 +195,7 @@
 										value="0"
 									/>
 									<span
-										class="text-white mb-0.5"
+										class="text-white mb-0.5 xl:text-xl"
 										id="downPaymentPercent"
 									></span>
 								</div>
@@ -205,7 +207,7 @@
 										>
 										<div class="relative inline-block w-fit">
 											<span
-												class="absolute right-24 translate-y-2/4 text-white text-xl -my-2.5"
+												class="absolute right-16 sm:right-24 lg:right-16 xl:right-24 translate-y-2/4 text-white text-xl -my-2.5"
 												>$</span
 											>
 											<input
@@ -230,7 +232,7 @@
 										max="2.00"
 									/>
 									<span
-										class="text-white mb-0.5"
+										class="text-white mb-0.5 xl:text-xl"
 										id="annualTaxesPercent"
 									></span>
 								</div>
@@ -263,14 +265,14 @@
 									>
 									<div class="relative inline-block">
 										<span
-											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
+											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2 xl:text-2xl"
 											>$</span
 										>
 										<input
 											hx-post="/postMonthlyPayment"
 											hx-target="#monthlyPayment"
 											hx-trigger="keyup changed delay:0.25s"
-											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6 xl:text-xl"
 											name="annualInsurance"
 											id="annualInsurance"
 											type="number"
@@ -286,14 +288,14 @@
 									>
 									<div class="relative inline-block">
 										<span
-											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2"
+											class="absolute left-2 translate-y-2/4 text-white text-xl -my-2 xl:text-2xl"
 											>$</span
 										>
 										<input
 											hx-post="/postMonthlyPayment"
 											hx-target="#monthlyPayment"
 											hx-trigger="keyup changed delay:0.25s"
-											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6"
+											class="w-full block border-white py-2.5 mb-1 text-white bg-transparent border-0 border-b-2 appearance-none focus:outline-none focus:ring-0 focus:border-white peer pl-6 xl:text-xl"
 											name="monthlyHoa"
 											id="monthlyHoa"
 											type="number"
@@ -349,7 +351,7 @@
 							<p class="text-xl">HOA</p>
 							<p class="text-right text-xl">$0.00</p>
 							<p
-								class="text-center text-sm italic col-span-2 sm:text-xs sm:leading-relaxed"
+								class="text-center text-xs italic col-span-2 md:text-sm xl:text-base sm:leading-relaxed"
 							>
 								Please note that the mortgage calculator on our website provides
 								estimates for general informational purposes only. For
