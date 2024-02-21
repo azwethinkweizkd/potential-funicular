@@ -30,14 +30,16 @@
 	</head>
 	<body class="bg-slate-400">
 		<section
-			class="mx-auto my-6 w-3/4 h-fit px-8 sm:h-100 bg-neutral-900 shadow-black shadow-lg rounded-xl z-0"
+			class="h-fit px-8 sm:h-100 bg-neutral-900 shadow-black shadow-lg lg:my-6 lg:w-3/4 lg:rounded-xl lg:mx-auto xl:my-6 xl:w-3/4 xl:rounded-xl xl:mx-auto 2xl:my-6 2xl:w-3/4 2xl:rounded-xl 2xl:mx-auto z-0 border-8 border-violet-600 lg:border-0"
 		>
 			<h1 class="text-center text-white text-5xl py-4">Mortgage Calculator</h1>
-			<div class="m-auto text-center my-4">
-				<ol class="text-white flex justify-center space-x-8">
+			<div class="m-auto text-center mt-4 mb-96 sm:mb-24">
+				<ol
+					class="text-white flex flex-wrap justify-evenly md:flex lg:flex xl:flex 2xl:flex"
+				>
 					<li>
 						<button
-							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							class="text-lg sm:text-lg md:text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
 							hx-get="/getLoanDescription?loanType=conventional"
 							hx-trigger="click"
 							hx-target="#loan-description"
@@ -47,7 +49,7 @@
 					</li>
 					<li>
 						<button
-							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							class="text-lg sm:text-lg md:text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
 							hx-get="/getLoanDescription?loanType=fha"
 							hx-trigger="click"
 							hx-target="#loan-description"
@@ -57,7 +59,7 @@
 					</li>
 					<li>
 						<button
-							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							class="text-lg sm:text-lg md:text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
 							hx-get="/getLoanDescription?loanType=jumbo"
 							hx-trigger="click"
 							hx-target="#loan-description"
@@ -67,7 +69,7 @@
 					</li>
 					<li>
 						<button
-							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							class="text-lg sm:text-lg md:text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
 							hx-get="/getLoanDescription?loanType=refinance"
 							hx-trigger="click"
 							hx-target="#loan-description"
@@ -77,7 +79,7 @@
 					</li>
 					<li>
 						<button
-							class="text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
+							class="text-lg sm:text-lg md:text-xl border-b-2 border-transparent focus:border-violet-600 active:border-violet-600 transition-all duration-300 py-1.5 px-3 focus:outline-none focus:ring-0"
 							hx-get="/getLoanDescription?loanType=vaLoan"
 							hx-trigger="click"
 							hx-target="#loan-description"
@@ -88,20 +90,24 @@
 				</ol>
 				<p
 					id="loan-description"
-					class="m-auto w-2/3 text-white my-2 h-24 place-items-center"
+					class="m-auto text-lg text-white my-2 h-24 place-items-center 2xl:text-xl"
 					hx-get="/getLoanDescription?loanType=conventional"
 					hx-swap="innerHTML"
 					hx-trigger="load"
 				></p>
 			</div>
 
-			<div class="mx-auto grid grid-cols-3 gap-8 py-6">
-				<div class="col-span-2 flex">
+			<div
+				class="mx-auto grid grid-cols-3 gap-8 pt-12 mt-96 sm:mt-2 md:mt-0 lg:mt-12 xl:mt-6"
+			>
+				<div class="col-span-3 flex lg:col-span-2 xl:col-span-2 2xl:col-span-2">
 					<form class="col-span-2 flex-grow">
-						<div class="col-span-2 px-12 border-r-2 my-8 sm:px-6">
-							<div class="grid grid-cols-2 gap-8 my-6 pt-4">
+						<div
+							class="col-span-2 px-2 lg:border-r-2 xl:border-r-2 2xl:border-r-2 sm:px-1 md:px-2 lg:px-4 xl:px-8 2xl:px-12"
+						>
+							<div class="grid grid-cols-1 gap-8 my-6 pt-4 md:grid-cols-2">
 								<div class="flex flex-col">
-									<label class="text-white mb-1" for="purchasePrice"
+									<label class="text-white mb-1 2xl:text-xl" for="purchasePrice"
 										>Purchase Price</label
 									>
 									<div class="relative inline-block">
@@ -126,7 +132,7 @@
 									</div>
 								</div>
 								<div class="flex flex-col">
-									<label class="text-white mb-1" for="mortgageTerm"
+									<label class="text-white mb-1 2xl:text-xl" for="mortgageTerm"
 										>Mortgage Term</label
 									>
 									<select
@@ -151,11 +157,11 @@
 									</select>
 								</div>
 							</div>
-							<div class="grid grid-cols-2 gap-8 my-6">
+							<div class="grid grid-cols-1 gap-8 my-6 md:grid-cols-2">
 								<!-- Down Payment -->
 								<div class="flex flex-col">
 									<div class="flex justify-between items-center">
-										<label class="text-white mb-1" for="downPayment"
+										<label class="text-white mb-1 2xl:text-xl" for="downPayment"
 											>Down Payment</label
 										>
 										<div class="relative inline-block w-fit">
@@ -192,7 +198,7 @@
 								<!-- Annual Taxes -->
 								<div class="flex flex-col">
 									<div class="flex justify-between items-center">
-										<label class="text-white mb-1" for="annualTaxes"
+										<label class="text-white mb-1 2xl:text-xl" for="annualTaxes"
 											>Annual Taxes</label
 										>
 										<div class="relative inline-block w-fit">
@@ -229,7 +235,7 @@
 							</div>
 							<!-- Interest Rate -->
 							<div class="my-2">
-								<label class="text-white mb-1" for="interestRate"
+								<label class="text-white mb-1 2xl:text-xl" for="interestRate"
 									>Interest Rate (%)</label
 								>
 								<input
@@ -246,9 +252,11 @@
 								<span class="text-white mb-0.5" id="interestRatePercent"></span>
 							</div>
 
-							<div class="grid grid-cols-2 gap-8 my-6">
+							<div class="grid grid-cols-1 gap-8 my-6 md:grid-cols-2">
 								<div class="flex flex-col">
-									<label class="text-white mb-1" for="annualInsurance"
+									<label
+										class="text-white mb-1 2xl:text-xl"
+										for="annualInsurance"
 										>Annual Insurance</label
 									>
 									<div class="relative inline-block">
@@ -271,7 +279,7 @@
 									</div>
 								</div>
 								<div class="flex flex-col">
-									<label class="text-white mb-1" for="monthlyHoa"
+									<label class="text-white mb-1 2xl:text-xl" for="monthlyHoa"
 										>Monthly HOA</label
 									>
 									<div class="relative inline-block">
@@ -297,19 +305,21 @@
 								If you would like your results emailed to you, enter your email
 								below for future reference
 							</p>
-							<div class="flex items-center my-4">
+							<div
+								class="flex flex-col md:flex-row md:items-center my-4 align-middle"
+							>
 								<input
 									type="email"
 									name="email"
 									id="email"
-									class="w-5/6 px-3 py-0.5 rounded-l-md border-gray-300 text-sm h-8"
+									class="mx-auto w-full px-3 py-0.5 rounded-md md:w-5/6 md:mx-0 md:rounded-r-none md:rounded-l-md border-gray-300 text-sm h-8"
 									placeholder="Email Address"
 								/>
 								<button
 									hx-post="/postSendEmailAndSaveInDb"
 									hx-target="#emailAttemptResponse"
 									id="sendButton"
-									class="bg-violet-600 w-1/6 px-4 py-0.5 rounded-r-md text-white text-small hover:shadow-md transition-shadow ease-in duration-200 h-8"
+									class="bg-violet-600 mt-4 md:mt-0 md:w-1/6 px-4 py-1.5 mx-auto md:mx-0 rounded-md md:rounded-r-md md:rounded-l-none text-white text-sm hover:shadow-md transition-shadow ease-in duration-200 h-8 lg:px-0 lg:py-0 lg:font-normal xl:px-2 xl:py-0 xl:text-sm xl:font-semibold 2xl:text-base 2xl:font-semibold"
 									type="submit"
 									disabled
 								>
@@ -322,7 +332,7 @@
 				</div>
 
 				<div
-					class="col-span-1 text-white flex flex-col px-4 my-6 sm:px-2 sm:my-3"
+					class="col-span-3 text-white flex flex-col lg:px-2 lg:my-6 lg:col-span-1 xl:col-span-1 2xl:col-span-1"
 					id="monthlyPayment"
 				>
 					<h3 class="text-white text-6xl text-center m-auto mb-8">$0.00</h3>
