@@ -33,7 +33,9 @@
 			class="h-fit px-8 sm:h-100 bg-neutral-900 shadow-black shadow-lg lg:my-6 lg:w-3/4 lg:rounded-xl lg:mx-auto xl:my-6 xl:w-3/4 xl:rounded-xl xl:mx-auto 2xl:my-6 2xl:w-3/4 2xl:rounded-xl 2xl:mx-auto z-0 border-8 border-violet-600 lg:border-0"
 		>
 			<h1 class="text-center text-white text-5xl py-4">Mortgage Calculator</h1>
-			<div class="m-auto text-center mt-4 mb-96 sm:mb-24">
+			<div
+				class="m-auto text-center mt-4 mb-96 sm:mb-24 lg:mb-8 xl:mb-16 2xl:mb-4"
+			>
 				<ol
 					class="text-white flex flex-wrap justify-evenly md:flex lg:flex xl:flex 2xl:flex"
 				>
@@ -90,7 +92,7 @@
 				</ol>
 				<p
 					id="loan-description"
-					class="m-auto text-lg text-white my-2 h-24 place-items-center 2xl:text-xl"
+					class="m-auto text-lg text-white my-2 h-24 place-items-center md:w-2/3 lg:w-full xl:w-2/3 2xl:text-xl 2xl:w-2/3"
 					hx-get="/getLoanDescription?loanType=conventional"
 					hx-swap="innerHTML"
 					hx-trigger="load"
@@ -98,7 +100,7 @@
 			</div>
 
 			<div
-				class="mx-auto grid grid-cols-3 gap-8 pt-12 mt-96 sm:mt-2 md:mt-0 lg:mt-12 xl:mt-6"
+				class="mx-auto grid grid-cols-3 gap-8 pt-12 mt-96 sm:mt-2 md:mt-0 lg:mt-0 xl:mt-6"
 			>
 				<div class="col-span-3 flex lg:col-span-2 xl:col-span-2 2xl:col-span-2">
 					<form class="col-span-2 flex-grow">
